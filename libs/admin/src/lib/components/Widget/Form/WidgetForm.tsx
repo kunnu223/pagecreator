@@ -52,9 +52,8 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
   } = useForm({
     shouldUnregister: false,
   });
-  const { switchClass } = useProviderState();
+  const { switchClass, commonTranslations } = useProviderState();
   const {
-    t,
     data,
     canAdd,
     canUpdate,
@@ -63,6 +62,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
     widgetTypes,
     loading,
     languages,
+    widgetTranslations,
     onWidgetFormSubmit,
     getCollectionData,
     collectionData,
@@ -280,7 +280,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
             if (!tabItem.names[lang.code]) {
               setError(`tabs.${index}.names.${lang.code}`, {
                 type: 'manual',
-                message: `${t('widget.tabNameRequired')} (${lang.name})`,
+                message: `${widgetTranslations.tabNameRequired} (${lang.name})`,
               });
               isTabsValid = false;
             }
@@ -288,7 +288,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
         } else if (!tabItem.name) {
           setError(`tabs.${index}.name`, {
             type: 'manual',
-            message: t('widget.tabNameRequired'),
+            message: widgetTranslations.tabNameRequired,
           });
           isTabsValid = false;
         }
@@ -410,43 +410,43 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
   // Schemas
   const widgetFormSchema: SchemaType[] = [
     {
-      label: `${t('widget.name')}`,
+      label: commonTranslations.name,
       required: true,
       accessor: 'name',
       type: 'text',
-      placeholder: t('widget.namePlaceholder'),
+      placeholder: commonTranslations.namePlaceholder,
       onInput: handleCapitalize,
       validations: {
-        required: t('widget.nameRequired'),
+        required: commonTranslations.nameRequired,
       },
       wrapperClassName: 'khb_grid-item-1of2 khb_padding-right-1 khb_align-top',
     },
     {
-      label: `${t('widget.code')}`,
+      label: commonTranslations.code,
       accessor: 'code',
       required: true,
       type: 'text',
       onInput: handleCode,
       editable: false,
-      placeholder: t('widget.codePlaceholder'),
+      placeholder: commonTranslations.codePlaceholder,
       validations: {
-        required: t('widget.codeRequired'),
+        required: commonTranslations.codeRequired,
       },
       wrapperClassName:
         'khb_grid-item-1of2 khb_padding-left-1 khb_align-top khb_margin-top-0',
     },
     Array.isArray(languages) && languages.length > 0
       ? {
-          label: `${t('widget.widgetTitle')}`,
+          label: commonTranslations.title,
           accessor: 'widgetTitles',
           required: true,
           type:
             customInputs && customInputs['widgetTitles'] ? undefined : 'text',
           validations: {
-            required: t('widget.widgetTitleRequired'),
+            required: commonTranslations.titleRequired,
           },
-          info: t('widget.widgetTitleInfo'),
-          placeholder: t('widget.widgetTitlePlaceholder'),
+          info: widgetTranslations.widgetTitleInfo,
+          placeholder: commonTranslations.titlePlaceholder,
           onInput: handleCapitalize,
           Input:
             customInputs && customInputs['widgetTitles']
@@ -454,48 +454,48 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
               : undefined,
         }
       : {
-          label: `${t('widget.widgetTitle')}`,
+          label: commonTranslations.title,
           accessor: 'widgetTitle',
           required: true,
           type:
             customInputs && customInputs['widgetTitle'] ? undefined : 'text',
           onInput: handleCapitalize,
-          placeholder: t('widget.widgetTitlePlaceholder'),
+          placeholder: commonTranslations.titlePlaceholder,
           validations: {
-            required: t('widget.widgetTitleRequired'),
+            required: commonTranslations.titleRequired,
           },
-          info: t('widget.widgetTitleInfo'),
+          info: widgetTranslations.widgetTitleInfo,
           Input:
             customInputs && customInputs['widgetTitle']
               ? customInputs['widgetTitle']
               : undefined,
         },
     {
-      label: `${t('widget.widgetType')}`,
+      label: widgetTranslations.widgetType,
       required: true,
       editable: false,
       accessor: 'widgetType',
       type: 'select',
       validations: {
-        required: t('widget.widgetTypeRequired'),
+        required: widgetTranslations.widgetTypeRequired,
       },
       options: widgetTypes,
     },
     {
-      label: t('widget.autoPlay'),
+      label: widgetTranslations.autoPlay,
       accessor: 'autoPlay',
       type: 'checkbox',
       show: selectedWidgetType?.value === 'Carousel',
       switchClass: switchClass,
     },
     {
-      label: `${t('widget.itemsType')}`,
+      label: widgetTranslations.itemsType,
       required: true,
       editable: false,
       accessor: 'itemsType',
       type: 'select',
       validations: {
-        required: t('widget.itemsTypePlaceholder'),
+        required: widgetTranslations.itemsTypePlaceholder,
       },
       options:
         selectedWidgetType?.value === 'Tabs' ||
@@ -506,54 +506,54 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
           : itemsTypes,
     },
     {
-      label: t('widget.color'),
+      label: widgetTranslations.color,
       accessor: 'backgroundColor',
       type: 'color',
       className: 'khb_input-color',
     },
     {
-      label: t('widget.webPerRow'),
+      label: widgetTranslations.webPerRow,
       accessor: 'webPerRow',
       type: 'number',
       required: true,
-      placeholder: t('widget.webPerRowPlaceholder'),
+      placeholder: widgetTranslations.webPerRowPlaceholder,
       wrapperClassName: 'khb_grid-item-1of3 khb_padding-right-1',
       validations: {
-        required: t('widget.webPerRowRequired'),
+        required: widgetTranslations.webPerRowRequired,
         min: {
           value: 1,
-          message: t('widget.minPerRow'),
+          message: widgetTranslations.minPerRow,
         },
       },
     },
     {
-      label: t('widget.tabletPerRow'),
+      label: widgetTranslations.tabletPerRow,
       accessor: 'tabletPerRow',
       type: 'number',
       required: true,
-      placeholder: t('widget.tabletPerRowPlaceholder'),
+      placeholder: widgetTranslations.tabletPerRowPlaceholder,
       wrapperClassName: 'khb_grid-item-1of3 khb_padding-left-1',
       validations: {
-        required: t('widget.tabletPerRowRequired'),
+        required: widgetTranslations.tabletPerRowRequired,
         min: {
           value: 1,
-          message: t('widget.minPerRow'),
+          message: widgetTranslations.minPerRow,
         },
       },
     },
     {
-      label: t('widget.mobilePerRow'),
+      label: widgetTranslations.mobilePerRow,
       accessor: 'mobilePerRow',
       type: 'number',
       required: true,
-      placeholder: t('widget.mobilePerRowPlaceholder'),
+      placeholder: widgetTranslations.mobilePerRowPlaceholder,
       wrapperClassName:
         'khb_grid-item-1of3 khb_padding-right-1 khb_padding-left-1',
       validations: {
-        required: t('widget.mobilePerRowRequired'),
+        required: widgetTranslations.mobilePerRowRequired,
         min: {
           value: 1,
-          message: t('widget.minPerRow'),
+          message: widgetTranslations.minPerRow,
         },
       },
     },
@@ -601,9 +601,9 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
           setValue={setValue}
           control={control}
           languages={languages}
-          deleteTitle={t('widget.tabDeleteTitle')}
-          yesButtonText={t('yesButtonText') || t('common:yesButtonText')}
-          noButtonText={t('cancelButtonText') || t('common:cancelButtonText')}
+          deleteTitle={widgetTranslations.tabDeleteTitle}
+          yesButtonText={commonTranslations.yes}
+          noButtonText={commonTranslations.cancel}
           errors={errors}
           itemsPlaceholder={`Select ${selectedCollectionType?.label}...`}
           loadOptions={onChangeSearch}
@@ -635,7 +635,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
             languages={languages}
             clearError={clearErrors}
             collapseId={constants.webItems}
-            title={t('widget.webItems')}
+            title={widgetTranslations.webItems}
             id={constants.webItems}
             setError={setError}
             show={webItemsVisible || !!(errors && errors?.[constants.webItems])}
@@ -646,8 +646,8 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
             control={control}
             register={register}
             loading={loading}
-            addText={t('addButtonText')}
-            deleteText={t('deleteButtonText') || t('common:deleteButtonText')}
+            addText={commonTranslations.add}
+            deleteText={commonTranslations.delete}
           />
 
           {/* Mobile Items */}
@@ -655,7 +655,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
             languages={languages}
             clearError={clearErrors}
             collapseId={constants.mobileItems}
-            title={t('widget.mobileItems')}
+            title={widgetTranslations.mobileItems}
             id={constants.mobileItems}
             name={constants.mobileItems}
             setError={setError}
@@ -669,8 +669,8 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
             errors={errors}
             control={control}
             register={register}
-            addText={t('addButtonText')}
-            deleteText={t('deleteButtonText') || t('common:deleteButtonText')}
+            addText={commonTranslations.add}
+            deleteText={commonTranslations.delete}
           />
         </>
       )}

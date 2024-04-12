@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import React, { createContext, useContext } from 'react';
-import { PAGE_LIMITS } from '../constants/common';
+import { PAGE_LIMITS, TRANSLATION_PAIRS_WIDGET } from '../constants/common';
 import { WidgetContextType } from '../types';
 
 interface WidgetContextProviderProps
@@ -10,7 +10,6 @@ interface WidgetContextProviderProps
 const WidgetContext = createContext<WidgetContextType | null>(null);
 
 const WidgetContextProvider = ({
-  t = () => '',
   // Form
   list = [],
   languages = [],
@@ -54,13 +53,13 @@ const WidgetContextProvider = ({
   onPartialUpdateWidget = () => Promise.resolve(),
   reactSelectStyles = {},
   imageMaxSize = 10_485_760,
+  widgetTranslations,
   // other
   children,
 }: WidgetContextProviderProps) => {
   return (
     <WidgetContext.Provider
       value={{
-        t,
         // Form
         list,
         languages,
@@ -104,6 +103,10 @@ const WidgetContextProvider = ({
         canDelete,
         loader,
         imageMaxSize,
+        widgetTranslations: {
+          ...TRANSLATION_PAIRS_WIDGET,
+          ...(widgetTranslations || {}),
+        },
       }}
     >
       {children}

@@ -11,7 +11,7 @@ import {
 import { useProviderState } from '../../../context/ProviderContext';
 
 const WidgetTable = ({ extraActions, extraColumns }: DerivedTableProps) => {
-  const { switchClass } = useProviderState();
+  const { commonTranslations, switchClass } = useProviderState();
   const {
     list,
     canUpdate,
@@ -21,7 +21,6 @@ const WidgetTable = ({ extraActions, extraColumns }: DerivedTableProps) => {
     onPartialUpdateWidget,
     loading,
     loader,
-    t,
   } = useWidgetState();
   const updateClosure = useCallback(
     (item: ObjectType, key: string, value: ValuesType) => {
@@ -35,12 +34,12 @@ const WidgetTable = ({ extraActions, extraColumns }: DerivedTableProps) => {
     onChangeFormState('DELETE', item);
 
   const dataKeys: any[] = [
-    { label: t('widget.tableName'), dataKey: 'name', highlight: true },
-    { label: t('widget.tableCode'), dataKey: 'code' },
+    { label: commonTranslations.name, dataKey: 'name', highlight: true },
+    { label: commonTranslations.code, dataKey: 'code' },
   ];
   if (canPartialUpdate)
     dataKeys.push({
-      label: t('widget.tableActive'),
+      label: commonTranslations.active,
       dataKey: 'isActive',
       Cell: ({ row }: any) =>
         canPartialUpdate ? (
@@ -58,7 +57,7 @@ const WidgetTable = ({ extraActions, extraColumns }: DerivedTableProps) => {
       loader={loader}
       loading={loading}
       dataKeys={dataKeys}
-      actionsLabel={t('widget.actionsLabel')}
+      actionsLabel={commonTranslations.actions}
       extraColumns={extraColumns}
       extraActions={extraActions}
       actions={{

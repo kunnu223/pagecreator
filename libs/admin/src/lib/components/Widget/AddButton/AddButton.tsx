@@ -1,12 +1,14 @@
 import React from "react";
 import Button from "../../common/Button";
 import { useWidgetState } from "../../../context/WidgetContext";
+import { useProviderState } from '../../../context/ProviderContext';
 
 const AddButton = () => {
-	const { onChangeFormState, t, canAdd } = useWidgetState();
-	return (
+  const { commonTranslations } = useProviderState();
+  const { onChangeFormState, canAdd } = useWidgetState();
+  return (
     <Button disabled={!canAdd} onClick={() => onChangeFormState('ADD')}>
-      {t('addButtonText') || t('common:addButtonText')}
+      {commonTranslations.add}
     </Button>
   );
 };

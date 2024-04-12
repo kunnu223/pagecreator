@@ -14,10 +14,11 @@ import {
   isEmpty,
 } from '../../../helper/utils';
 import { CONSTANTS } from '../../../constants/common';
+import { useProviderState } from '../../../context/ProviderContext';
 
 const PageForm = ({ formRef }: FormProps) => {
+  const { commonTranslations } = useProviderState();
   const {
-    t,
     data,
     formState,
     onPageFormSubmit,
@@ -28,6 +29,7 @@ const PageForm = ({ formRef }: FormProps) => {
     onChangeWidgetSequence,
     canAdd,
     canUpdate,
+    pageTranslations,
   } = usePageState();
   const {
     register,
@@ -110,42 +112,42 @@ const PageForm = ({ formRef }: FormProps) => {
   // Schemas
   const pageFormSchema: SchemaType[] = [
     {
-      label: `${t('page.name')}`,
+      label: commonTranslations.name,
       required: true,
       accessor: 'name',
       type: 'text',
-      placeholder: t('page.namePlaceholder'),
+      placeholder: commonTranslations.namePlaceholder,
       onInput: handleCapitalize,
       validations: {
-        required: t('page.nameRequired'),
+        required: commonTranslations.nameRequired,
       },
     },
     {
-      label: `${t('page.code')}`,
+      label: commonTranslations.code,
       accessor: 'code',
       required: true,
       type: 'text',
       onInput: handleCode,
       editable: false,
-      placeholder: t('page.codePlaceholder'),
+      placeholder: commonTranslations.codePlaceholder,
       validations: {
-        required: t('page.codeRequired'),
+        required: commonTranslations.codeRequired,
       },
     },
     {
-      label: `${t('page.slug')}`,
+      label: pageTranslations.slug,
       accessor: 'slug',
       required: true,
       type: 'text',
       onInput: handleSlug,
       editable: false,
-      placeholder: t('page.slugPlaceholder'),
+      placeholder: pageTranslations.slugPlaceholder,
       validations: {
-        required: t('page.slugRequired'),
+        required: pageTranslations.slugRequired,
       },
     },
     {
-      label: t('page.widgets'),
+      label: pageTranslations.widgets,
       accessor: 'widgets',
       type: 'ReactSelect',
       options: widgets,

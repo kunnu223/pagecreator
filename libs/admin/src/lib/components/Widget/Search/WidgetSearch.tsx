@@ -3,7 +3,8 @@ import Input from '../../common/Input';
 import { useWidgetState } from '../../../context/WidgetContext';
 
 const WidgetSearch = () => {
-  const { changeSearch, t, canList, setCurrentPage } = useWidgetState();
+  const { changeSearch, widgetTranslations, canList, setCurrentPage } =
+    useWidgetState();
   const callerRef = useRef<NodeJS.Timeout | null>(null);
   const [searchVal, setSearchVal] = useState<string>();
 
@@ -23,7 +24,7 @@ const WidgetSearch = () => {
       value={searchVal}
       disabled={!canList}
       onChange={(e) => onChangeSearch(e.target.value)}
-      placeholder={t('widget.searchPlaceholder')}
+      placeholder={widgetTranslations.searchPlaceholder}
     />
   );
 };

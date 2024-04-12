@@ -32,17 +32,6 @@ export const isEmpty = (data: any) => {
   if ([undefined, null, ''].includes(data)) return true;
   return false;
 };
-
-export function createTranslation(
-  t: TFunc | undefined,
-  obj: Record<string, string>
-) {
-  return function (key: string): string {
-    if (typeof t === 'function') return t(key);
-    return obj[key] || '';
-  };
-}
-
 export const build_path = (...args: string[]) => {
   return args
     .map((part, i) => {

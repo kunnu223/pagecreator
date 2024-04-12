@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { useFieldArray } from 'react-hook-form';
 import Close from '../../../icons/close';
 import Plus from '../../../icons/plus';
-import { InputProps, InputSizes } from '../../../types';
+import { InputProps, InputSizes, SrcSetMessageProps } from '../../../types';
 
 const SrcSetInput = ({
   size,
@@ -47,8 +47,14 @@ const SrcSet = ({
   errors,
   name,
   disabled = false,
-  t,
-}: InputProps) => {
+
+  screenSizeRequired,
+  heightRequired,
+  minHeight,
+  minScreenSize,
+  minWidth,
+  widthRequired,
+}: InputProps & SrcSetMessageProps) => {
   const { fields, append, remove } = useFieldArray({
     control,
     name: name!,
@@ -74,9 +80,9 @@ const SrcSet = ({
               size={size}
               placeholder="Screen Size"
               rest={register(`${name}.${index}.screenSize`, {
-                required: t('item.screenSizeRequired'),
+                required: screenSizeRequired,
                 validate: (value: string) =>
-                  Number(value) <= 0 ? t('item.minScreenSize') : true,
+                  Number(value) <= 0 ? minScreenSize : true,
               })}
               disabled={disabled}
             />
@@ -86,9 +92,9 @@ const SrcSet = ({
               error={errors?.[index]?.['width']?.message?.toString()}
               index={index}
               rest={register(`${name}.${index}.width`, {
-                required: t('item.widthRequired'),
+                required: widthRequired,
                 validate: (value: string) =>
-                  Number(value) <= 0 ? t('item.minWidth') : true,
+                  Number(value) <= 0 ? minWidth : true,
               })}
               className={className}
               size={size}
@@ -101,9 +107,9 @@ const SrcSet = ({
               error={errors?.[index]?.['height']?.message?.toString()}
               index={index}
               rest={register(`${name}.${index}.height`, {
-                required: t('item.heightRequired'),
+                required: heightRequired,
                 validate: (value: string) =>
-                  Number(value) <= 0 ? t('item.minHeight') : true,
+                  Number(value) <= 0 ? minHeight : true,
               })}
               className={className}
               size={size}

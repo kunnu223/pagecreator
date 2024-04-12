@@ -1,10 +1,8 @@
 import React, { useRef } from 'react';
 import usePage from '../../../hooks/usePage';
-import { createTranslation } from '../../../helper/utils';
 import PageContextProvider from '../../../context/PageContext';
 import {
   DEFAULT_PERMISSIONS,
-  TRANSLATION_PAIRS_COMMON,
   TRANSLATION_PAIRS_PAGE,
 } from '../../../constants/common';
 import { PageProps } from '../../../types';
@@ -14,14 +12,15 @@ import Search from '../Search';
 import PageForm from '../Form';
 import AddButton from '../AddButton';
 import Pagination from '../Pagination';
-import DeleteModal from '../../common/DeleteModal';
 import Drawer from '../../common/Drawer';
+import DeleteModal from '../../common/DeleteModal';
 import PageFormActions from '../PageFormActions';
 import PageFormWrapper from '../PageFormWrapper';
+import { useProviderState } from '../../../context/ProviderContext';
 
 const Page = ({
-  t,
   loader,
+  translations,
   explicitForm = false,
   children,
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -29,12 +28,13 @@ const Page = ({
   permissions = {},
   preConfirmDelete,
 }: PageProps) => {
+  const { commonTranslations } = useProviderState();
   const derivedPermissions = Object.assign(DEFAULT_PERMISSIONS, permissions);
   const formRef = useRef<HTMLFormElement | null>(null);
-  const derivedT = createTranslation(t, {
-    ...TRANSLATION_PAIRS_COMMON,
+  const combinedTranslations = {
     ...TRANSLATION_PAIRS_PAGE,
-  });
+    ...translations,
+  };
   const {
     list,
     widgets,
@@ -65,7 +65,6 @@ const Page = ({
 
   return (
     <PageContextProvider
-      t={derivedT}
       loader={loader}
       list={list}
       searchText={searchText}
@@ -92,6 +91,7 @@ const Page = ({
       canDelete={derivedPermissions.delete}
       canUpdate={derivedPermissions.update}
       canList={derivedPermissions.list}
+      pageTranslations={translations}
     >
       {children ? (
         children
@@ -111,9 +111,9 @@ const Page = ({
           onClose={onCloseForm}
           title={
             formState === 'ADD'
-              ? derivedT('page.addPageTitle')
+              ? combinedTranslations.addPage
               : formState === 'UPDATE'
-              ? derivedT('page.updatePageTitle')
+              ? combinedTranslations.updatePage
               : ''
           }
           footerContent={<PageFormActions formRef={formRef} />}
@@ -127,25 +127,13 @@ const Page = ({
           itemData={itemData}
           onClose={onCloseForm}
           onConfirmDelete={onCofirmDeletePage}
-          confirmationRequired={
-            derivedT('confirmationRequired') ||
-            derivedT('common:confirmationRequired')
-          }
-          confirm={derivedT('confirm') || derivedT('common:confirm')}
-          lossOfData={derivedT('lossOfData') || derivedT('common:lossOfData')}
-          permanentlyDelete={
-            derivedT('permanentlyDelete') ||
-            derivedT('common:permanentlyDelete')
-          }
-          pleaseType={derivedT('pleaseType') || derivedT('common:pleaseType')}
-          toProceedOrCancel={
-            derivedT('toProceedOrCancel') ||
-            derivedT('common:toProceedOrCancel')
-          }
-          typeHerePlaceholder={
-            derivedT('typeHerePlaceholder') ||
-            derivedT('common:typeHerePlaceholder')
-          }
+          confirmationRequired={commonTranslations.confirmationRequired}
+          confirm={commonTranslations.confirm}
+          lossOfData={commonTranslations.lossOfData}
+          permanentlyDelete={commonTranslations.permanentlyDelete}
+          pleaseType={commonTranslations.pleaseType}
+          toProceedOrCancel={commonTranslations.toProceedOrCancel}
+          typeHerePlaceholder={commonTranslations.typeHerePlaceholder}
         />
       )}
     </PageContextProvider>
