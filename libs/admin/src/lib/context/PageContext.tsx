@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import React, { createContext, useContext } from 'react';
-import { PAGE_LIMITS, TRANSLATION_PAIRS_COMMON } from '../constants/common';
-import { ObjectType, PageContextType } from '../types';
+import { PAGE_LIMITS, TRANSLATION_PAIRS_PAGE } from '../constants/common';
+import { PageContextType } from '../types';
 
 interface PageContextProviderProps
   extends React.PropsWithChildren,
@@ -10,13 +10,6 @@ interface PageContextProviderProps
 const PageContext = createContext<PageContextType | null>(null);
 
 const PageContextProvider = ({
-  t = (key: string) =>
-    ((
-      {
-        ...TRANSLATION_PAIRS_COMMON,
-      } as ObjectType
-    )[key]),
-  // Form
   searchText = '',
   changeSearch = () => {},
   list = [],
@@ -47,13 +40,13 @@ const PageContextProvider = ({
   data = [],
   canDelete = false,
   loader = undefined,
+  pageTranslations,
   // other
   children,
 }: PageContextProviderProps) => {
   return (
     <PageContext.Provider
       value={{
-        t,
         // Form
         list,
         searchText,
@@ -85,6 +78,10 @@ const PageContextProvider = ({
         data,
         canDelete,
         loader,
+        pageTranslations: {
+          ...TRANSLATION_PAIRS_PAGE,
+          ...(pageTranslations || {}),
+        },
       }}
     >
       {children}

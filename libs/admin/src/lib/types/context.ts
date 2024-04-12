@@ -1,5 +1,41 @@
 import { WidgetType, ItemsType } from './api';
 import { FormActionTypes, LanguageType, OptionType } from './common';
+import { WidgetTranslationPairs, PageTranslationPairs } from './components';
+
+export interface CommonTranslationPairs {
+  confirmationRequired: string;
+  permanentlyDelete: string;
+  lossOfData: string;
+  pleaseType: string;
+  toProceedOrCancel: string;
+  confirm: string;
+  next: string;
+  previous: string;
+  page: string;
+  indicatesRequired: string;
+  cancel: string;
+  yes: string;
+  delete: string;
+  create: string;
+  update: string;
+  showing: string;
+  add: string;
+  of: string;
+  typeHerePlaceholder: string;
+
+  code: string;
+  codePlaceholder: string;
+  codeRequired: string;
+  name: string;
+  namePlaceholder: string;
+  nameRequired: string;
+  title: string;
+  titlePlaceholder: string;
+  titleRequired: string;
+
+  active: string;
+  actions: string;
+}
 
 export interface ProviderContextType {
   baseUrl: string;
@@ -16,6 +52,7 @@ export interface ProviderContextType {
   ) => void;
   switchClass: string;
   onLogout: () => void;
+  commonTranslations: CommonTranslationPairs;
   widgetRoutesPrefix: string;
   pageRoutesPrefix: string;
 }
@@ -30,6 +67,7 @@ export interface ProviderContextProviderProps
       | 'itemsRoutesPrefix'
       | 'pageRoutesPrefix'
       | 'switchClass'
+      | 'commonTranslations'
     > {
   onError?: (
     callback_code: import('../constants/common').CALLBACK_CODES,
@@ -46,9 +84,10 @@ export interface ProviderContextProviderProps
   widgetRoutesPrefix?: string;
   itemsRoutesPrefix?: string;
   pageRoutesPrefix?: string;
+  translations?: Partial<CommonTranslationPairs>;
 }
+
 export interface WidgetContextType {
-  t: (key: string) => string;
   // Form
   list: any[];
   languages: LanguageType[];
@@ -99,10 +138,10 @@ export interface WidgetContextType {
   reactSelectStyles?: any;
   imageBaseUrl?: string;
   imageMaxSize: number;
+  widgetTranslations: WidgetTranslationPairs;
 }
 
 export interface PageContextType {
-  t: (key: string) => string;
   // Form
   list: any[];
   searchText: string;
@@ -141,4 +180,5 @@ export interface PageContextType {
   data: any;
   loader?: JSX.Element;
   canDelete?: boolean;
+  pageTranslations: PageTranslationPairs;
 }

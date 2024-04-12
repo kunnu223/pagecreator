@@ -1,11 +1,14 @@
 import React from 'react';
 import Table from '../../common/Table';
 import { usePageState } from '../../../context/PageContext';
+import { useProviderState } from '../../../context/ProviderContext';
 import { CombineObjectType, DerivedTableProps } from '../../../types';
 
 const PageTable = ({ extraActions, extraColumns }: DerivedTableProps) => {
-  const { list, onChangeFormState, t, loading, loader, canUpdate, canDelete } =
+  const { commonTranslations } = useProviderState();
+  const { list, onChangeFormState, loading, loader, canUpdate, canDelete } =
     usePageState();
+
   const onUpdateClick = (item: CombineObjectType) =>
     onChangeFormState('UPDATE', item);
   const onDeleteClick = (item: CombineObjectType) =>
@@ -17,10 +20,10 @@ const PageTable = ({ extraActions, extraColumns }: DerivedTableProps) => {
       loader={loader}
       loading={loading}
       dataKeys={[
-        { label: t('page.tableName'), dataKey: 'name', highlight: true },
-        { label: t('page.tableCode'), dataKey: 'code' },
+        { label: commonTranslations.name, dataKey: 'name', highlight: true },
+        { label: commonTranslations.code, dataKey: 'code' },
       ]}
-      actionsLabel={t('page.actionsLabel')}
+      actionsLabel={commonTranslations.actions}
       actions={{
         edit: canUpdate ? onUpdateClick : undefined,
         delete: canDelete ? onDeleteClick : undefined,

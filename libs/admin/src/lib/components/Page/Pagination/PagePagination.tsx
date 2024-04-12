@@ -1,16 +1,19 @@
 import React from "react";
 import { usePageState } from "../../../context/PageContext";
 import Pagination from "../../common/Pagination";
+import { useProviderState } from '../../../context/ProviderContext';
 
 const PagePagination = () => {
-	const { t, totalPages, totalRecords, currentPage, pageSize, setCurrentPage } = usePageState();
-	return (
+  const { commonTranslations } = useProviderState();
+  const { totalPages, totalRecords, currentPage, pageSize, setCurrentPage } =
+    usePageState();
+  return (
     <Pagination
-      ofText={t('of') || t('common:of')}
-      pageText={t('confirm') || t('common:confirm')}
-      showingText={t('showing') || t('common:showing')}
-      nextContent={t('nextContent') || t('common:nextContent')}
-      previousContent={t('previousContent') || t('common:previousContent')}
+      ofText={commonTranslations.of}
+      pageText={commonTranslations.confirm}
+      showingText={commonTranslations.showing}
+      nextContent={commonTranslations.next}
+      previousContent={commonTranslations.previous}
       totalPages={totalPages}
       totalRecords={totalRecords}
       currentPage={currentPage}

@@ -3,7 +3,8 @@ import Input from "../../common/Input";
 import { usePageState } from "../../../context/PageContext";
 
 const PageSearch = () => {
-	const { t, canList, changeSearch, setCurrentPage } = usePageState();
+	const { pageTranslations, canList, changeSearch, setCurrentPage } =
+    usePageState();
   const callerRef = useRef<NodeJS.Timeout | null>(null);
   const [search, setSearch] = useState<string>('');
 
@@ -23,7 +24,7 @@ const PageSearch = () => {
       value={search}
       disabled={!canList}
       onChange={(e) => onChangeSearch(e.target.value)}
-      placeholder={t('page.searchPages')}
+      placeholder={pageTranslations.searchPages}
     />
   );
 };

@@ -1,11 +1,8 @@
 import React, { useRef } from 'react';
 import useWidget from '../../../hooks/useWidget';
 import WidgetContextProvider from '../../../context/WidgetContext';
-import { createTranslation } from '../../../helper/utils';
 import {
-  TRANSLATION_PAIRS_COMMON,
   TRANSLATION_PAIRS_WIDGET,
-  TRANSLATION_PAIRS_ITEM,
   DEFAULT_PERMISSIONS,
 } from '../../../constants/common';
 import { WidgetProps } from '../../../types';
@@ -19,9 +16,9 @@ import Drawer from '../../common/Drawer';
 import DeleteModal from '../../common/DeleteModal';
 import WidgetFormActions from '../WidgetFormActions';
 import WiddgetFormWrapper from '../WidgetFormWrapper';
+import { useProviderState } from '../../../context/ProviderContext';
 
 const Widget = ({
-  t,
   routes,
   loader,
   explicitForm = false,
@@ -33,15 +30,16 @@ const Widget = ({
   formatListItem,
   formatOptionLabel,
   imageMaxSize,
+  translations,
   children,
 }: WidgetProps) => {
+  const { commonTranslations } = useProviderState();
   const derivedPermissions = Object.assign(DEFAULT_PERMISSIONS, permissions);
   const widgetFormRef = useRef<HTMLFormElement | null>(null);
-  const derivedT = createTranslation(t, {
-    ...TRANSLATION_PAIRS_COMMON,
+  const derivedT = {
     ...TRANSLATION_PAIRS_WIDGET,
-    ...TRANSLATION_PAIRS_ITEM,
-  });
+    ...(translations || {}),
+  };
   const {
     list,
     loading,
@@ -83,7 +81,6 @@ const Widget = ({
       languages={languages}
       imageBaseUrl={imageBaseUrl}
       onChangeFormState={onChangeFormState}
-      t={derivedT}
       searchText={searchText}
       changeSearch={changeSearch}
       loader={loader}
@@ -115,6 +112,7 @@ const Widget = ({
       formState={formState}
       closeForm={onCloseForm}
       imageMaxSize={imageMaxSize}
+      widgetTranslations={translations}
     >
       {children ? (
         children
@@ -135,9 +133,9 @@ const Widget = ({
           onClose={onCloseForm}
           title={
             formState === 'ADD'
-              ? derivedT('widget.addWidgetTitle')
+              ? derivedT.addWidgetTitle
               : formState === 'UPDATE'
-              ? derivedT('widget.updateWidgetTitle')
+              ? derivedT.updateWidgetTitle
               : ''
           }
           footerContent={<WidgetFormActions formRef={widgetFormRef} />}
@@ -151,25 +149,13 @@ const Widget = ({
           itemData={itemData}
           onClose={onCloseForm}
           onConfirmDelete={onCofirmDeleteWidget}
-          confirmationRequired={
-            derivedT('confirmationRequired') ||
-            derivedT('common:confirmationRequired')
-          }
-          confirm={derivedT('confirm') || derivedT('common:confirm')}
-          lossOfData={derivedT('lossOfData') || derivedT('common:lossOfData')}
-          permanentlyDelete={
-            derivedT('permanentlyDelete') ||
-            derivedT('common:permanentlyDelete')
-          }
-          pleaseType={derivedT('pleaseType') || derivedT('common:pleaseType')}
-          toProceedOrCancel={
-            derivedT('toProceedOrCancel') ||
-            derivedT('common:toProceedOrCancel')
-          }
-          typeHerePlaceholder={
-            derivedT('typeHerePlaceholder') ||
-            derivedT('common:typeHerePlaceholder')
-          }
+          confirmationRequired={commonTranslations.confirmationRequired}
+          confirm={commonTranslations.confirm}
+          lossOfData={commonTranslations.lossOfData}
+          permanentlyDelete={commonTranslations.permanentlyDelete}
+          pleaseType={commonTranslations.pleaseType}
+          toProceedOrCancel={commonTranslations.toProceedOrCancel}
+          typeHerePlaceholder={commonTranslations.typeHerePlaceholder}
         />
       )}
     </WidgetContextProvider>

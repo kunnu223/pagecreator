@@ -6,9 +6,8 @@ import { useWidgetState } from '../../../context/WidgetContext';
 import { useProviderState } from '../../../context/ProviderContext';
 
 const WidgetFormActions = ({ formRef }: FormActionWrapperProps) => {
-  const { onError } = useProviderState();
-  const { closeForm, loading, canAdd, canUpdate, t, formState } =
-    useWidgetState();
+  const { onError, commonTranslations } = useProviderState();
+  const { closeForm, loading, canAdd, canUpdate, formState } = useWidgetState();
   const onSubmitClick = (
     e?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
@@ -38,12 +37,12 @@ const WidgetFormActions = ({ formRef }: FormActionWrapperProps) => {
       loading={loading}
       primaryLabel={
         formState === 'ADD'
-          ? t('createButtonText') || t('common:createButtonText')
-          : t('updateButtonText') || t('common:updateButtonText')
+          ? commonTranslations.create
+          : commonTranslations.update
       }
       onPrimaryButtonClick={onSubmitClick}
       onSecondaryButtonClick={closeForm}
-      secondaryLabel={t('cancelButtonText') || t('common:cancelButtonText')}
+      secondaryLabel={commonTranslations.cancel}
     />
   );
 };

@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import Accordian from '../../common/Accordian';
-import Button from '../../common/Button';
-import Input from '../../common/Input';
-import { ItemsAccordianProps } from '../../../types';
 import { Controller, useFieldArray } from 'react-hook-form';
+
+import Input from '../../common/Input';
+import Button from '../../common/Button';
+import Accordian from '../../common/Accordian';
 import ImageUpload from '../../common/ImageUpload';
+import { ItemsAccordianProps } from '../../../types';
+import ConfirmPopover from '../../common/ConfirmPopover';
 import { useWidgetState } from '../../../context/WidgetContext';
 import { useProviderState } from '../../../context/ProviderContext';
-import ConfirmPopover from '../../common/ConfirmPopover';
 
 interface ImageInputProps {
   label: string;
@@ -91,9 +92,14 @@ const ItemsAccordian = ({
   addText = 'Add',
   deleteText = 'Delete',
 }: ItemsAccordianProps) => {
-  const { baseUrl } = useProviderState();
-  const { onImageUpload, onImageRemove, t, imageBaseUrl, imageMaxSize } =
-    useWidgetState();
+  const { baseUrl, commonTranslations } = useProviderState();
+  const {
+    onImageUpload,
+    onImageRemove,
+    imageBaseUrl,
+    imageMaxSize,
+    widgetTranslations,
+  } = useWidgetState();
   const [itemsShow, setItemsShow] = useState<boolean[]>([]);
   const {
     fields: items,
@@ -161,11 +167,9 @@ const ItemsAccordian = ({
             footerContent={
               <ConfirmPopover
                 onConfirm={() => removeItem(index)}
-                title={t('item.deleteTitle')}
-                confirmText={t('yesButtonText') || t('common:yesButtonText')}
-                cancelText={
-                  t('cancelButtonText') || t('common:cancelButtonText')
-                }
+                title={widgetTranslations.deleteTitle}
+                confirmText={commonTranslations.yes}
+                cancelText={commonTranslations.cancel}
               >
                 <Button type="danger" size="sm" disabled={loading}>
                   {deleteText}
@@ -179,9 +183,9 @@ const ItemsAccordian = ({
                   {languages.map((lang) => (
                     <Input
                       rest={register(`${name}.${index}.titles.${lang.code}`, {
-                        required: t('item.titleRequired'),
+                        required: commonTranslations.titleRequired,
                       })}
-                      label={t('item.title') + ` (${lang.name})`}
+                      label={commonTranslations.title + ` (${lang.name})`}
                       error={
                         errors[name]?.[index]?.['titles']?.[lang.code]
                           ? errors[name]?.[index]?.['titles']?.[
@@ -192,7 +196,7 @@ const ItemsAccordian = ({
                       type="text"
                       className="w-full p-2"
                       placeholder={
-                        t('item.titlePlaceholder') + ` (${lang.name})`
+                        commonTranslations.titlePlaceholder + ` (${lang.name})`
                       }
                       required
                     />
@@ -201,13 +205,13 @@ const ItemsAccordian = ({
               ) : (
                 <Input
                   rest={register(`${name}.${index}.title`, {
-                    required: t('item.titleRequired'),
+                    required: commonTranslations.titleRequired,
                   })}
-                  label={t('item.title')}
+                  label={commonTranslations.title}
                   error={errors[name]?.[index]?.['title']?.message?.toString()}
                   type="text"
                   className="w-full p-2"
-                  placeholder={t('item.titlePlaceholder')}
+                  placeholder={commonTranslations.titlePlaceholder}
                   required
                 />
               )}
@@ -216,11 +220,12 @@ const ItemsAccordian = ({
                   {languages.map((lang) => (
                     <Input
                       rest={register(`${name}.${index}.subtitles.${lang.code}`)}
-                      label={t('item.subtitle') + ` (${lang.name})`}
+                      label={widgetTranslations.subtitle + ` (${lang.name})`}
                       type="text"
                       className="w-full p-2"
                       placeholder={
-                        t('item.subTitlePlaceholder') + ` (${lang.name})`
+                        widgetTranslations.subTitlePlaceholder +
+                        ` (${lang.name})`
                       }
                     />
                   ))}
@@ -228,10 +233,10 @@ const ItemsAccordian = ({
               ) : (
                 <Input
                   rest={register(`${name}.${index}.subtitle`)}
-                  label={t('item.subtitle')}
+                  label={widgetTranslations.subtitle}
                   type="text"
                   className="w-full p-2"
-                  placeholder={t('item.subTitlePlaceholder')}
+                  placeholder={widgetTranslations.subTitlePlaceholder}
                 />
               )}
               {Array.isArray(languages) && languages.length > 0 ? (
@@ -239,11 +244,12 @@ const ItemsAccordian = ({
                   {languages.map((lang) => (
                     <Input
                       rest={register(`${name}.${index}.altTexts.${lang.code}`)}
-                      label={t('item.altText') + ` (${lang.name})`}
-                      type={'text'}
+                      label={widgetTranslations.altText + ` (${lang.name})`}
+                      type="text"
                       className="w-full p-2"
                       placeholder={
-                        t('item.altTextPlaceholder') + ` (${lang.name})`
+                        widgetTranslations.altTextPlaceholder +
+                        ` (${lang.name})`
                       }
                     />
                   ))}
@@ -251,33 +257,38 @@ const ItemsAccordian = ({
               ) : (
                 <Input
                   rest={register(`${name}.${index}.altText`)}
-                  label={t('item.altText')}
-                  type={'text'}
+                  label={widgetTranslations.altText}
+                  type="text"
                   className="w-full p-2"
-                  placeholder={t('item.altTextPlaceholder')}
+                  placeholder={widgetTranslations.altTextPlaceholder}
                 />
               )}
               <Input
                 rest={register(`${name}.${index}.link`)}
-                label={t('item.link')}
-                type={'url'}
+                label={widgetTranslations.link}
+                type="url"
                 className="w-full p-2"
-                placeholder={t('item.linkPlaceholder')}
+                placeholder={widgetTranslations.linkPlaceholder}
               />
               <Input.SrcSet
                 control={control}
                 register={register}
-                label={t(`item.srcset`)}
+                label={widgetTranslations.srcset}
                 name={`${name}.${index}.srcset`}
                 errors={errors[name]?.[index]?.['srcset']}
-                t={t}
+                screenSizeRequired={widgetTranslations.screenSizeRequired}
+                heightRequired={widgetTranslations.heightRequired}
+                minHeight={widgetTranslations.minHeight}
+                minScreenSize={widgetTranslations.minScreenSize}
+                minWidth={widgetTranslations.minWidth}
+                widthRequired={widgetTranslations.widthRequired}
               />
               {Array.isArray(languages) && languages.length > 0 ? (
                 <>
                   {languages.map((lang) => (
                     <ImageInput
                       key={lang.code}
-                      label={t('item.image') + ` (${lang.name})`}
+                      label={widgetTranslations.image + ` (${lang.name})`}
                       control={control}
                       name={`${name}.${index}.imgs.${lang.code}`}
                       error={errors[name]?.[index]?.['imgs']?.[
@@ -293,14 +304,14 @@ const ItemsAccordian = ({
                         <>
                           <div className="khb_img-text-wrapper">
                             <div className="khb_img-text-label">
-                              <span>{t('item.uploadFile')}</span>
+                              <span>{widgetTranslations.uploadFile}</span>
                             </div>
                             <p className="khb_img-text-1">
-                              {t('item.dragDrop')}
+                              {widgetTranslations.dragDrop}
                             </p>
                           </div>
                           <p className="khb_img-text-2">
-                            {t('item.allowedFormat')}
+                            {widgetTranslations.allowedFormat}
                           </p>
                         </>
                       }
@@ -309,7 +320,7 @@ const ItemsAccordian = ({
                 </>
               ) : (
                 <ImageInput
-                  label={t('item.image')}
+                  label={widgetTranslations.image}
                   control={control}
                   name={`${name}.${index}.img`}
                   error={errors[name]?.[index]?.['img']?.message?.toString()}
@@ -323,12 +334,14 @@ const ItemsAccordian = ({
                     <>
                       <div className="khb_img-text-wrapper">
                         <div className="khb_img-text-label">
-                          <span>{t('item.uploadFile')}</span>
+                          <span>{widgetTranslations.uploadFile}</span>
                         </div>
-                        <p className="khb_img-text-1">{t('item.dragDrop')}</p>
+                        <p className="khb_img-text-1">
+                          {widgetTranslations.dragDrop}
+                        </p>
                       </div>
                       <p className="khb_img-text-2">
-                        {t('item.allowedFormat')}
+                        {widgetTranslations.allowedFormat}
                       </p>
                     </>
                   }

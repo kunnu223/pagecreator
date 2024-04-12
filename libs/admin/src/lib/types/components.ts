@@ -67,7 +67,14 @@ export interface InputProps {
   register?: any;
   info?: string;
   name?: string;
-  t?: any;
+}
+export interface SrcSetMessageProps {
+  screenSizeRequired: string;
+  minScreenSize: string;
+  widthRequired: string;
+  minWidth: string;
+  heightRequired: string;
+  minHeight: string;
 }
 export interface HTMLEditorProps {
   id?: string;
@@ -142,8 +149,52 @@ export interface InputRendererProps {
   setError: (msg: string) => void;
   disabled?: boolean;
 }
+export interface WidgetTranslationPairs {
+  itemsType: string;
+  itemsTypePlaceholder: string;
+  widgetType: string;
+  widgetTypeRequired: string;
+  color: string;
+  webPerRow: string;
+  webPerRowPlaceholder: string;
+  mobilePerRow: string;
+  mobilePerRowPlaceholder: string;
+  tabletPerRow: string;
+  tabletPerRowPlaceholder: string;
+  mobileItems: string;
+  webItems: string;
+  searchPlaceholder: string;
+  autoPlay: string;
+  addWidgetTitle: string;
+  updateWidgetTitle: string;
+  webPerRowRequired: string;
+  tabletPerRowRequired: string;
+  mobilePerRowRequired: string;
+  tabDeleteTitle: string;
+  widgetTitleInfo: string;
+  minPerRow: string;
+  tabNameRequired: string;
+
+  subtitle: string;
+  subTitlePlaceholder: string;
+  altText: string;
+  altTextPlaceholder: string;
+  link: string;
+  linkPlaceholder: string;
+  image: string;
+  uploadFile: string;
+  dragDrop: string;
+  allowedFormat: string;
+  srcset: string;
+  screenSizeRequired: string;
+  widthRequired: string;
+  heightRequired: string;
+  minScreenSize: string;
+  minWidth: string;
+  minHeight: string;
+  deleteTitle: string;
+}
 export interface WidgetProps {
-  t?: any;
   loader?: any;
   routes?: Routes_Input;
   explicitForm?: boolean;
@@ -155,6 +206,7 @@ export interface WidgetProps {
   reactSelectStyles?: any;
   imageBaseUrl?: string;
   imageMaxSize?: number;
+  translations?: WidgetTranslationPairs;
 }
 export interface DerivedTableProps {
   extraActions?: (item: any) => JSX.Element;
@@ -193,7 +245,7 @@ export interface SchemaType extends ReactSelectProps {
     | 'file'
     | 'url'
     | 'ReactSelect'
-    | 'srcset'
+    // | 'srcset'
     | 'color'
     | 'html';
   options?: { value: string; label: string }[];
@@ -208,12 +260,21 @@ export interface SchemaType extends ReactSelectProps {
   info?: string;
   customStyles?: any;
 }
+export interface PageTranslationPairs {
+  slug: string;
+  slugPlaceholder: string;
+  slugRequired: string;
+  addPage: string;
+  updatePage: string;
+  searchPages: string;
+  widgets: string;
+}
 export interface PageProps {
-  t?: any;
   loader?: any;
   explicitForm?: boolean;
   children?: JSX.Element;
   permissions?: PermissionsObj;
+  translations?: PageTranslationPairs;
   preConfirmDelete?: (data: { row: ObjectType }) => Promise<boolean>;
 }
 export interface PaginationProps {
