@@ -489,9 +489,27 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
       switchClass: switchClass,
     },
     {
+      label: widgetTranslations.textContent,
+      accessor: 'textContent',
+      required: selectedWidgetType?.value === 'Text',
+      type:
+        customInputs && customInputs['textContent'] ? undefined : 'text',
+      placeholder: widgetTranslations.textContentPlaceholder,
+      validations: {
+        required: widgetTranslations.textContentRequired,
+      },
+      info: widgetTranslations.textContentInfo,
+      show: selectedWidgetType?.value === 'Text',
+      Input:
+        customInputs && customInputs['textContent']
+          ? customInputs['textContent']
+          : undefined,
+    },
+    {
       label: widgetTranslations.itemsType,
       required: true,
       editable: false,
+      show: selectedWidgetType?.value !== 'Text',
       accessor: 'itemsType',
       type: 'select',
       validations: {
@@ -515,6 +533,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
       label: widgetTranslations.webPerRow,
       accessor: 'webPerRow',
       type: 'number',
+      show: selectedWidgetType?.value !== 'Text',
       required: true,
       placeholder: widgetTranslations.webPerRowPlaceholder,
       wrapperClassName: 'khb_grid-item-1of3 khb_padding-right-1',
@@ -530,6 +549,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
       label: widgetTranslations.tabletPerRow,
       accessor: 'tabletPerRow',
       type: 'number',
+      show: selectedWidgetType?.value !== 'Text',
       required: true,
       placeholder: widgetTranslations.tabletPerRowPlaceholder,
       wrapperClassName: 'khb_grid-item-1of3 khb_padding-left-1',
@@ -545,6 +565,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
       label: widgetTranslations.mobilePerRow,
       accessor: 'mobilePerRow',
       type: 'number',
+      show: selectedWidgetType?.value !== 'Text',
       required: true,
       placeholder: widgetTranslations.mobilePerRowPlaceholder,
       wrapperClassName:
@@ -569,7 +590,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
       onChange: setSelectedCollectionItems,
       loadOptions: onChangeSearch,
       isLoading: collectionDataLoading,
-      show: !itemsEnabled && selectedWidgetType?.value !== 'Tabs',
+      show: !itemsEnabled && (selectedWidgetType?.value !== 'Tabs'|| selectedWidgetType?.value !== 'Text'),
       formatOptionLabel: formatOptionLabel,
       listCode: selectedCollectionType?.value,
       customStyles: reactSelectStyles || {},
@@ -628,7 +649,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
         />
       )}
 
-      {itemsEnabled && selectedWidgetType?.value !== 'Tabs' && (
+      {!itemsEnabled && (selectedWidgetType?.value !== 'Tabs'|| selectedWidgetType?.value !== 'Text') && (
         <>
           {/* Web Items */}
           <ItemsAccordian

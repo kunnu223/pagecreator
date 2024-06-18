@@ -105,6 +105,7 @@ export const create = joi.object<ItemValidation>({
   updatedBy: joi.any().optional(),
   deletedBy: joi.any().optional(),
   deletedAt: joi.any().optional(),
+  textContent: joi.string().optional()
 });
 
 export const update = joi.object<ItemValidation>({
@@ -137,6 +138,7 @@ export const update = joi.object<ItemValidation>({
   updatedBy: joi.any().optional(),
   deletedBy: joi.any().optional(),
   deletedAt: joi.any().optional(),
+  textContent: joi.string().optional()
 });
 
 export const list = joi.object({

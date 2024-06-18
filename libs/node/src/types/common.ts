@@ -60,6 +60,7 @@ export interface IWidgetSchema extends Document {
     collectionItems: string[];
   }[];
   backgroundColor: string;
+  textContent: string;
 }
 export interface IItemSchema extends Document {
   widgetId: typeof Types.ObjectId;
