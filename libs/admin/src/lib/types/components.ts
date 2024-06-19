@@ -193,6 +193,11 @@ export interface WidgetTranslationPairs {
   minWidth: string;
   minHeight: string;
   deleteTitle: string;
+
+  textContent: string;
+  textContentRequired: string;
+  textContentInfo: string;
+  textContentPlaceholder: string;
 }
 export interface WidgetProps {
   loader?: any;
