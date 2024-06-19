@@ -112,10 +112,10 @@ const TRANSLATION_PAIRS_WIDGET = {
   minWidth: 'Width should be greater than 0',
   minHeight: 'Height should be greater than 0',
   deleteTitle: 'Are you sure you want to delete this item?',
-  textContent: "Text",
+  textContent: 'Text',
   textContentRequired: 'Text is required',
   textContentInfo: 'HTML is supported',
-  textContentPlaceholder: 'Enter text'
+  textContentPlaceholder: 'Enter text',
 };
 const TRANSLATION_PAIRS_PAGE = {
   widgets: 'Widgets',
