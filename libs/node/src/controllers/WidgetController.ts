@@ -1,5 +1,4 @@
-import { Types } from 'mongoose';
-import { Widget, Item, SrcSet } from './../models';
+import { Models, Types } from 'mongoose';
 import {
   create,
   remove,
@@ -33,10 +32,18 @@ const catchAsync = (fn: any) => {
   return defaults.catchAsync(fn, 'Widget');
 };
 
-const deleteItems = async (widgetId: string) => {
+const getModals = (req: IRequest) => defaults.getModals(req);
+
+const deleteItems = async (widgetId: string, models: Models) => {
+  const { Item } = models;
   await deleteAll(Item, { widgetId: new Types.ObjectId(widgetId) });
 };
-const createItems = async (itemsData: any[], widgetId: string) => {
+const createItems = async (
+  itemsData: any[],
+  widgetId: string,
+  models: Models
+) => {
+  const { Item, SrcSet } = models;
   itemsData = itemsData.map((item: any) => ({
     ...item,
     _id: new Types.ObjectId(),
@@ -60,15 +67,16 @@ const createItems = async (itemsData: any[], widgetId: string) => {
 
 export const createWidget = catchAsync(
   async (req: IRequest, res: IResponse) => {
+    const models = getModals(req);
     const data = req.body;
     let items = [];
     if ('items' in data) {
       items = JSON.parse(JSON.stringify(data.items));
       delete data.items;
     }
-    const widget = await create(Widget, data);
+    const widget = await create(models['Widget'], data);
     if (items.length > 0) {
-      await createItems(items, widget._id);
+      await createItems(items, widget._id, models);
     }
     res.message = req?.i18n?.t('widget.create');
     return createdDocumentResponse(widget, res);
@@ -77,6 +85,7 @@ export const createWidget = catchAsync(
 
 export const updateWidget = catchAsync(
   async (req: IRequest, res: IResponse) => {
+    const models = getModals(req);
     const data = req.body;
     const _id = req.params['id'];
     let items = [];
@@ -84,14 +93,14 @@ export const updateWidget = catchAsync(
       items = JSON.parse(JSON.stringify(data.items));
       delete data.items;
     }
-    const updatedWidget = await update(Widget, { _id }, data);
+    const updatedWidget = await update(models['Widget'], { _id }, data);
     if (items.length > 0 && updatedWidget) {
-      await deleteItems(_id);
-      await createItems(items, updatedWidget._id);
+      await deleteItems(_id, models);
+      await createItems(items, updatedWidget._id, models);
     }
     if (updatedWidget) {
-      updateRedisWidget(updatedWidget.code);
-      updateWidgetPagesData([updatedWidget.id]);
+      updateRedisWidget(updatedWidget.code, models);
+      updateWidgetPagesData([updatedWidget.id], models);
     }
     res.message = req?.i18n?.t('widget.update');
     return successResponse(updatedWidget, res);
@@ -100,12 +109,13 @@ export const updateWidget = catchAsync(
 
 export const deleteWidget = catchAsync(
   async (req: IRequest, res: IResponse) => {
-    await deleteItems(req.params['id']);
+    const models = getModals(req);
+    await deleteItems(req.params['id'], models);
     const _id = new Types.ObjectId(req.params['id']);
-    const deletedWidget = await remove(Widget, { _id });
+    const deletedWidget = await remove(models['Widget'], { _id });
     if (deletedWidget) {
-      updateRedisWidget(deletedWidget.code);
-      updateWidgetPagesData([deletedWidget.id]);
+      updateRedisWidget(deletedWidget.code, models);
+      updateWidgetPagesData([deletedWidget.id], models);
     }
     res.message = req?.i18n?.t('widget.delete');
     return successResponse(deletedWidget, res);
@@ -113,6 +123,7 @@ export const deleteWidget = catchAsync(
 );
 
 export const getWidgets = catchAsync(async (req: IRequest, res: IResponse) => {
+  const { Widget } = getModals(req);
   const search = req.body.search || '';
   const { collectionItems } = req.body;
   const { page, limit, sort } = req.body.options;
@@ -143,6 +154,8 @@ export const getWidgets = catchAsync(async (req: IRequest, res: IResponse) => {
     isActive: { $in: isActive === null ? [true, false] : [isActive] },
     $or: orOptions,
   };
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   const notifications = await list(Widget, query, customOptions);
   res.message = req?.i18n?.t('widget.getAll');
   return successResponse(notifications, res);
@@ -150,6 +163,7 @@ export const getWidgets = catchAsync(async (req: IRequest, res: IResponse) => {
 
 export const getSingleWidget = catchAsync(
   async (req: IRequest, res: IResponse) => {
+    const { Widget, Item } = getModals(req);
     const _id = req.params['id'];
     const widget = await (
       await getOne(Widget, { _id, isDeleted: true })
@@ -265,12 +279,13 @@ export const getSingleWidget = catchAsync(
 
 export const partialUpdateWidget = catchAsync(
   async (req: IRequest, res: IResponse) => {
+    const models = getModals(req);
     const data = req.body;
     const _id = req.params['id'];
-    const updatedWidget = await update(Widget, { _id }, data);
+    const updatedWidget = await update(models['Widget'], { _id }, data);
     if (updatedWidget) {
-      updateRedisWidget(updatedWidget.code);
-      updateWidgetPagesData([updatedWidget.id]);
+      updateRedisWidget(updatedWidget.code, models);
+      updateWidgetPagesData([updatedWidget.id], models);
     }
     res.message = req?.i18n?.t('widget.partialUpdate');
     return successResponse(updatedWidget, res);

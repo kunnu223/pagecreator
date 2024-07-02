@@ -1,5 +1,4 @@
-import { AggregateOptions } from 'mongoose';
-import { Widget, Page } from './../models';
+import { AggregateOptions, Models } from 'mongoose';
 import {
   AddSrcSetsToItems,
   appendCollectionData,
@@ -41,7 +40,8 @@ const getAggregationQuery = ({
   return aggregateQueryItem;
 };
 
-export const getWidgetDataDB = async (code: string) => {
+export const getWidgetDataDB = async (code: string, models: Models) => {
+  const { Widget } = models;
   const widgetDataArr = (await Widget.aggregate([
     {
       $match: {
@@ -228,14 +228,18 @@ export const getWidgetDataDB = async (code: string) => {
   return widgetData;
 };
 
-export const updateRedisWidget = async (code: string) => {
-  const widgetData = await getWidgetDataDB(code);
+export const updateRedisWidget = async (code: string, models: Models) => {
+  const widgetData = await getWidgetDataDB(code, models);
   if (widgetData) {
     await setRedisValue(`widgetData_${code}`, widgetData as unknown as JSON);
   }
 };
 
-export const updateWidgetPagesData = async (widgetIds: string[]) => {
+export const updateWidgetPagesData = async (
+  widgetIds: string[],
+  models: Models
+) => {
+  const { Page } = models;
   const pageCodes = await Page.find(
     {
       widgets: {
@@ -251,7 +255,8 @@ export const updateWidgetPagesData = async (widgetIds: string[]) => {
   }
 };
 
-export const getPageDataDB = async (code: string) => {
+export const getPageDataDB = async (code: string, models: Models) => {
+  const { Page } = models;
   const pageData: any = (await Page.aggregate([
     {
       $match: {
@@ -430,8 +435,8 @@ export const getPageDataDB = async (code: string) => {
   return pageData[0];
 };
 
-export const updateRedisPage = async (code: string) => {
-  const pageData = await getPageDataDB(code);
+export const updateRedisPage = async (code: string, models: Models) => {
+  const pageData = await getPageDataDB(code, models);
   if (pageData) {
     await setRedisValue(`pageData_${code}`, pageData);
   }
@@ -439,8 +444,11 @@ export const updateRedisPage = async (code: string) => {
 
 export const handleUpdateData = async (
   collectionName: string,
-  itemId: string | string[]
+  itemId: string | string[],
+  models: Models
 ) => {
+  if (!models) throw new Error('models is required');
+  const { Widget } = models;
   const widgets = await Widget.find(
     {
       collectionName: collectionName,
@@ -451,9 +459,12 @@ export const handleUpdateData = async (
     'code _id'
   ).lean();
   if (widgets.length) {
-    updateWidgetPagesData(widgets.map((widget: any) => widget._id));
+    updateWidgetPagesData(
+      widgets.map((widget: any) => widget._id),
+      models
+    );
     widgets.forEach((widget) => {
-      deleteRedisValue(`widgetData_${widget.code}`);
+      deleteRedisValue(`widgetData_${widget['code']}`);
     });
   }
 };

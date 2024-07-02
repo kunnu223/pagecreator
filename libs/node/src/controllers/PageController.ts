@@ -1,5 +1,4 @@
 import { Types } from 'mongoose';
-import { Page } from './../models';
 import { create, remove, update, list } from '../services/dbService';
 import {
   successResponse,
@@ -13,8 +12,10 @@ import { updateRedisPage } from '../services/dataService';
 const catchAsync = (fn: any) => {
   return defaults.catchAsync(fn, 'Page');
 };
+const getModals = (req: IRequest) => defaults.getModals(req);
 
 export const createPage = catchAsync(async (req: IRequest, res: IResponse) => {
+  const { Page } = getModals(req);
   const data = req.body;
   const page = await create(Page, data);
   res.message = req?.i18n?.t('page.create');
@@ -22,15 +23,17 @@ export const createPage = catchAsync(async (req: IRequest, res: IResponse) => {
 });
 
 export const updatePage = catchAsync(async (req: IRequest, res: IResponse) => {
+  const models = getModals(req);
   const data = req.body;
   const _id = req.params['id'];
-  const updatedPage = await update(Page, { _id }, data);
+  const updatedPage = await update(models['Page'], { _id }, data);
   res.message = req?.i18n?.t('page.update');
-  if (updatedPage) updateRedisPage(updatedPage.code); // update redis
+  if (updatedPage) updateRedisPage(updatedPage.code, models); // update redis
   return successResponse(updatedPage, res);
 });
 
 export const deletePage = catchAsync(async (req: IRequest, res: IResponse) => {
+  const { Page } = getModals(req);
   const _id = new Types.ObjectId(req.params['id']);
   const createdPage = await remove(Page, { _id });
   res.message = req?.i18n?.t('page.delete');
@@ -38,6 +41,7 @@ export const deletePage = catchAsync(async (req: IRequest, res: IResponse) => {
 });
 
 export const getPages = catchAsync(async (req: IRequest, res: IResponse) => {
+  const { Page } = getModals(req);
   const search = req.body.search || '';
   const { page, limit, populate, sort } = req.body.options;
   const customOptions = {
@@ -62,6 +66,8 @@ export const getPages = catchAsync(async (req: IRequest, res: IResponse) => {
       },
     ],
   };
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   const pages = await list(Page, query, customOptions);
   res.message = req?.i18n?.t('page.getAll');
   return successResponse(pages, res);

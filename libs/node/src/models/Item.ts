@@ -50,4 +50,4 @@ ItemSchema.plugin(mongoosePaginate);
 
 const Item = model('Item', ItemSchema) as unknown as IModel<IItemSchema>;
 
-export default Item;
+export { Item, ItemSchema };

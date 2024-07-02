@@ -8,16 +8,19 @@ const catchAsync = (fn: any) => {
   return defaults.catchAsync(fn, 'User');
 };
 
+const getModals = (req: IRequest) => defaults.getModals(req);
+
 // TO Do: Optimize the following
 export const getWidgetData = catchAsync(
   async (req: IRequest, res: IResponse) => {
+    const models = getModals(req);
     const { fresh } = req.query;
     const { code } = req.body;
     let widgetData = await getRedisValue(`widgetData_${code}`);
     if (widgetData && fresh !== 'true') {
       return successResponse(widgetData, res);
     }
-    widgetData = await getWidgetDataDB(code);
+    widgetData = await getWidgetDataDB(code, models);
 
     if (!widgetData) {
       res.message = req?.i18n?.t('user.widgetNotFound');
@@ -32,13 +35,14 @@ export const getWidgetData = catchAsync(
 
 // TO Do: Optimize the following
 export const getPageData = catchAsync(async (req: IRequest, res: IResponse) => {
+  const models = getModals(req);
   const { fresh } = req.query;
   const { code } = req.body;
   let pageData = await getRedisValue(`pageData_${code}`);
   if (pageData && fresh !== 'true') {
     return successResponse(pageData, res);
   }
-  pageData = await getPageDataDB(code);
+  pageData = await getPageDataDB(code, models);
 
   if (!pageData) {
     res.message = req?.i18n?.t('user.pageNotFound');
