@@ -1,6 +1,7 @@
 import {
   Document,
   Model,
+  Models,
   Types,
   FilterQuery,
   QueryOptions,
@@ -107,6 +108,7 @@ export interface IConfig {
     fn: any,
     modal?: string
   ) => (req: any, res: any, next: any) => void;
+  getModals: (req: Express.Request) => Models;
   collections: CollectionItem[];
   customWidgetTypes: {
     label: string;

@@ -1,9 +1,11 @@
+import mongoose from 'mongoose';
 import { NextFunction } from 'express';
 import { CollectionItem, IConfig, IRequest, IResponse } from '../types';
 import { RESPONSE_CODES, internalServerError, REGEXS } from '../constants';
 
 export const defaults: IConfig = {
   logger: console as any,
+  getModals: () => mongoose.models,
   catchAsync:
     (fn: any, modal = '') =>
     (req: IRequest, res: IResponse, next: NextFunction) => {

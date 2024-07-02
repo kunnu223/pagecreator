@@ -15,4 +15,4 @@ PageSchema.plugin(mongoosePaginate);
 
 const Page = model('Page', PageSchema) as unknown as IModel<IPageSchema>;
 
-export default Page;
+export { Page, PageSchema };

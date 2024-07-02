@@ -57,4 +57,4 @@ const Widget = model(
   WidgetSchema
 ) as unknown as IModel<IWidgetSchema>;
 
-export default Widget;
+export { Widget, WidgetSchema };

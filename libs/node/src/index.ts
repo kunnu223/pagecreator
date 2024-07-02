@@ -2,7 +2,18 @@ import { defaults } from './utils/defaults';
 import WidgetRoutes from './routes/WidgetRoute';
 import PageRoutes from './routes/PageRoute';
 import UserRoutes from './routes/UserRoute';
-import { Widget, Item, Page } from './models';
+import {
+  Widget,
+  Item,
+  Page,
+  Tab,
+  SrcSet,
+  WidgetSchema,
+  ItemSchema,
+  PageSchema,
+  SrcSetSchema,
+  TabSchema,
+} from './models';
 import { IConfig } from './types';
 import { handleUpdateData, handleResetData } from './services/dataService';
 
@@ -12,6 +23,8 @@ function setConfig(config: Partial<IConfig>) {
   }
   if (typeof config.catchAsync === 'function')
     defaults.catchAsync = config.catchAsync;
+  if (typeof config.getModals === 'function')
+    defaults.getModals = config.getModals;
   if (Array.isArray(config.collections)) {
     defaults.collections = config.collections;
   }
@@ -33,6 +46,13 @@ export {
   Widget,
   Item,
   Page,
+  Tab,
+  SrcSet,
+  WidgetSchema,
+  ItemSchema,
+  PageSchema,
+  SrcSetSchema,
+  TabSchema,
   setConfig,
   handleResetData,
   handleUpdateData,
