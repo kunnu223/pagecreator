@@ -649,7 +649,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
         />
       )}
 
-      {!itemsEnabled && (selectedWidgetType?.value !== 'Tabs'|| selectedWidgetType?.value !== 'Text') && (
+      {itemsEnabled && (selectedWidgetType?.value !== 'Tabs'|| selectedWidgetType?.value !== 'Text') && (
         <>
           {/* Web Items */}
           <ItemsAccordian
