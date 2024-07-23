@@ -37,12 +37,27 @@ export const getWidgetData = catchAsync(
 export const getPageData = catchAsync(async (req: IRequest, res: IResponse) => {
   const models = getModals(req);
   const { fresh } = req.query;
-  const { code } = req.body;
+  let code = req.body.code;
+  const slug = req.body.slug;
+  const { Page } = models;
+  if (slug) {
+    const page = await Page.findOne({ slug });
+    if (!page) {
+      res.message = req?.i18n?.t('user.pageNotFound');
+      return recordNotFound(res);
+    }
+    code = page.code;
+  }
   let pageData = await getRedisValue(`pageData_${code}`);
   if (pageData && fresh !== 'true') {
     return successResponse(pageData, res);
   }
-  pageData = await getPageDataDB(code, models);
+  try {
+    pageData = await getPageDataDB(code, models);
+    console.log(code);
+  } catch (error) {
+    console.log(error);
+  }
 
   if (!pageData) {
     res.message = req?.i18n?.t('user.pageNotFound');
