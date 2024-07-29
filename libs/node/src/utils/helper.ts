@@ -1,5 +1,4 @@
 import { model, Models, Schema, Types } from 'mongoose';
-import { Widget } from '../models';
 import { commonExcludedFields, defaults } from './defaults';
 import {
   IWidgetData,
@@ -8,7 +7,8 @@ import {
   SrcSetItem,
 } from '../types';
 
-export async function appendCollectionData(widgetData: IWidgetSchema[]) {
+export async function appendCollectionData(widgetData: IWidgetSchema[], models: Models) {
+  const { Widget }= models;
   // reduce widget data to optimize query
   const newData: IWidgetData = widgetData.reduce(
     (acc: IWidgetData, widget: IWidgetSchema) => {

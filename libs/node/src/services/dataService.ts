@@ -412,7 +412,7 @@ export const getPageDataDB = async (code: string, models: Models) => {
   if (!pageData.length) {
     return null;
   }
-  pageData[0].widgetsData = await appendCollectionData(pageData[0].widgetsData);
+  pageData[0].widgetsData = await appendCollectionData(pageData[0].widgetsData, models);
   if (
     Array.isArray(pageData[0].widgetsData) &&
     pageData[0].widgetsData.length > 0

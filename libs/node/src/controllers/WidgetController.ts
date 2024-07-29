@@ -1,4 +1,4 @@
-import { models, Models, Types } from 'mongoose';
+import { Models, Types } from 'mongoose';
 import {
   create,
   remove,
