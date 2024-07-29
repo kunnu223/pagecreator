@@ -1,4 +1,4 @@
-import { models, model, Schema, Types } from 'mongoose';
+import { model, Models, Schema, Types } from 'mongoose';
 import { Widget } from '../models';
 import { commonExcludedFields, defaults } from './defaults';
 import {
@@ -265,7 +265,7 @@ export function AddSrcSetsToItems(widgetData: IWidgetSchema) {
   }
 }
 
-export const getCollectionModal = (collectionName: string) => {
+export const getCollectionModal = (collectionName: string, models: Models) => {
   let collectionModal: any = models[collectionName];
   if (!collectionModal) {
     const schema = new Schema({}, { strict: false });

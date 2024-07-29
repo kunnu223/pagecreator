@@ -184,7 +184,7 @@ export const getWidgetDataDB = async (code: string, models: Models) => {
       collectionName: widgetData.collectionName,
       ids: widgetData.collectionItems,
     });
-    const collectionModal: any = getCollectionModal(widgetData.collectionName);
+    const collectionModal: any = getCollectionModal(widgetData.collectionName, models);
     const collectionItems = await collectionModal.aggregate(aggregateQueryItem);
     widgetData.collectionItems = collectionItems;
   }
@@ -205,7 +205,7 @@ export const getWidgetDataDB = async (code: string, models: Models) => {
       ids: tabCollectionItemIds,
     });
 
-    const collectionModal: any = getCollectionModal(widgetData.collectionName);
+    const collectionModal: any = getCollectionModal(widgetData.collectionName, models);
     const collectionItems: any = await collectionModal.aggregate(
       aggregateQueryItem
     );
