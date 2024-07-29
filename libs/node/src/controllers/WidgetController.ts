@@ -1,4 +1,4 @@
-import { Models, Types } from 'mongoose';
+import { models, Models, Types } from 'mongoose';
 import {
   create,
   remove,
@@ -331,6 +331,7 @@ export const getWidgetTypes = catchAsync(
 export const getCollectionData = catchAsync(
   async (req: IRequest, res: IResponse) => {
     let limit = 10;
+    const models = getModals(req);
     const { search, collectionName, collectionItems } = req.body;
     if (Array.isArray(collectionItems))
       limit = Math.max(collectionItems.length, limit);
@@ -342,7 +343,7 @@ export const getCollectionData = catchAsync(
       throw new Error(`No collection is specified with ${collectionName}`);
     }
     // setting up mongoose model
-    const TempModel = getCollectionModal(collectionName);
+    const TempModel = getCollectionModal(collectionName, models);
     // fetching data
     let query: any = collectionItem.filters || {};
     const orOptions: any = [];
