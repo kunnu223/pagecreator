@@ -267,6 +267,7 @@ export function AddSrcSetsToItems(widgetData: IWidgetSchema) {
 
 export const getCollectionModal = (collectionName: string, models: Models) => {
   let collectionModal: any = models[collectionName];
+  if (!collectionModal) collectionModal = models[collectionName.charAt(0).toUpperCase() + collectionName.slice(1)]
   if (!collectionModal) {
     const schema = new Schema({}, { strict: false });
     collectionModal = model(collectionName, schema, collectionName);
