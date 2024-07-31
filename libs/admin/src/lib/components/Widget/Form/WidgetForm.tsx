@@ -345,7 +345,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
       Array.isArray(selectedCollectionItems) &&
       selectedCollectionItems.length > 0
     ) {
-      formData[constants.collectionNameAccessor] = selectedCollectionItems.map(
+      formData[constants.collectionItemsAccessor] = selectedCollectionItems.map(
         (item) => item.value
       );
     }
