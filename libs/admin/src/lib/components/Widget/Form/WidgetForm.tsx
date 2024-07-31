@@ -110,6 +110,12 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
           itemsTypes.find((item) => item.value === data?.collectionName)
         );
       }
+      if(data?.widgetType === "Text"){
+        setItemsEnabled(false);
+      }
+      else{
+        setItemsEnabled(true);
+      }
     }
   }, [data, formState, itemsTypes, widgetTypes]);
 
