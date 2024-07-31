@@ -231,12 +231,19 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
 
   // Widget Form Functions
   const onWidgetFormInputChange = useCallback(
-    (value: ObjectType, name: string | undefined) => {
+    (value: ObjectType, name: string | undefined) => {     
       if (name === constants.widgetTypeAccessor) {
         const widgetType = widgetTypes.find(
           (type) => type.value === value[name]
         );
         setSelectedWidgetType(widgetType);
+        
+        if(widgetType?.value === "Text"){
+          setItemsEnabled(false)
+        }else{
+          setItemsEnabled(true)
+        }
+
         if (value[name] === constants.tabsWidgetTypeValue) {
           const firstItemType = getFirstItemTypeValue(value[name]);
           if (firstItemType) {
