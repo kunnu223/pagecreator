@@ -33,12 +33,12 @@ export const App = () => {
           <Widget
             formatOptionLabel={(code: any, label: any) => (
               <div>
-                {label.title}-{label?._id}
+                {label?.name}-{label?._id}
               </div>
             )}
             formatListItem={(code: any, label: any) => (
               <div>
-                {label?.title}-{label?._id}
+                {label?.name}-{label?._id}
               </div>
             )}
           />

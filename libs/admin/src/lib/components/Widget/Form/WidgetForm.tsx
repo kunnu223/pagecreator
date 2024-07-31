@@ -96,13 +96,13 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
         (type) => type.value === data?.widgetType
       );
       setSelectedWidgetType(widgetType);
-      if (data?.itemsType === 'Image') {
+      if (data?.itemsType === constants.imageItemsTypeValue) {
         setItemsEnabled(true);
       } else {
         setItemsEnabled(false);
       }
       if (
-        data?.collectionName !== 'Image' &&
+        data?.collectionName !== constants.imageItemsTypeValue &&
         itemsTypes &&
         itemsTypes.length > 0
       ) {
@@ -138,7 +138,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
         data[constants.widgetTypeAccessor] === constants.tabsWidgetTypeValue
       ) {
         collectionItems = data[constants.tabsAccessor][activeTab]
-          ? data[constants.tabsAccessor][activeTab]['collectionItems']
+          ? data[constants.tabsAccessor][activeTab][constants.collectionItemsAccessor]
           : [];
         valueToSet = `${constants.tabsAccessor}.${activeTab}.${constants.tabCollectionItemsAccessor}`;
       } else if (
@@ -219,7 +219,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
     (widgetType: string) => {
       const derivedItemTypes =
         widgetType === constants.tabsWidgetTypeValue
-          ? itemsTypes.filter((item) => item.label !== 'Image')
+          ? itemsTypes.filter((item) => item.label !== constants.imageItemsTypeValue)
           : itemsTypes;
       return derivedItemTypes[0];
     },
@@ -232,12 +232,12 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
   // Widget Form Functions
   const onWidgetFormInputChange = useCallback(
     (value: ObjectType, name: string | undefined) => {
-      if (name === 'widgetType') {
+      if (name === constants.widgetTypeAccessor) {
         const widgetType = widgetTypes.find(
           (type) => type.value === value[name]
         );
         setSelectedWidgetType(widgetType);
-        if (value[name] === 'Tabs') {
+        if (value[name] === constants.tabsWidgetTypeValue) {
           const firstItemType = getFirstItemTypeValue(value[name]);
           if (firstItemType) {
             setSelectedCollectionType(firstItemType);
@@ -265,7 +265,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
             (tabItem) => tabItem[constants.tabCollectionItemsAccessor]
           )
         );
-      }
+      }  
     },
     [getFirstItemTypeValue, itemsTypes, widgetTypes]
   );
@@ -303,7 +303,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
       formData[constants.widgetTypeAccessor] = getFirstWidgetTypeValue();
     }
     // setting tabs data if widgetType tab is selected
-    const tabsData = getValues('tabs');
+    const tabsData = getValues(constants.tabsAccessor);
     if (Array.isArray(tabsData) && tabsData.length > 0) {
       const isTabsValid = validateTabs(tabsData);
       if (!isTabsValid) return;
@@ -334,7 +334,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
       formData[constants.itemTypeAccessor] !== constants.imageItemsTypeValue &&
       formState === 'ADD'
     ) {
-      formData['collectionName'] = selectedCollectionType
+      formData[constants.collectionNameAccessor] = selectedCollectionType
         ? selectedCollectionType.value
         : getFirstItemTypeValue(
             formData[constants.widgetTypeAccessor] as string
@@ -345,7 +345,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
       Array.isArray(selectedCollectionItems) &&
       selectedCollectionItems.length > 0
     ) {
-      formData['collectionItems'] = selectedCollectionItems.map(
+      formData[constants.collectionItemsAccessor] = selectedCollectionItems.map(
         (item) => item.value
       );
     }
@@ -474,7 +474,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
       label: widgetTranslations.widgetType,
       required: true,
       editable: false,
-      accessor: 'widgetType',
+      accessor: constants.widgetTypeAccessor,
       type: 'select',
       validations: {
         required: widgetTranslations.widgetTypeRequired,
@@ -510,17 +510,17 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
       required: true,
       editable: false,
       show: selectedWidgetType?.value !== 'Text',
-      accessor: 'itemsType',
+      accessor: constants.itemTypeAccessor,
       type: 'select',
       validations: {
         required: widgetTranslations.itemsTypePlaceholder,
       },
       options:
-        selectedWidgetType?.value === 'Tabs' ||
+        selectedWidgetType?.value === constants.tabsWidgetTypeValue ||
         selectedWidgetType?.collectionsOnly
-          ? itemsTypes.filter((item) => item.label !== 'Image')
+          ? itemsTypes.filter((item) => item.label !== constants.imageItemsTypeValue)
           : selectedWidgetType?.imageOnly
-          ? itemsTypes.filter((item) => item.label === 'Image')
+          ? itemsTypes.filter((item) => item.label === constants.imageItemsTypeValue)
           : itemsTypes,
     },
     {
@@ -581,7 +581,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
     {
       label: selectedCollectionType?.label,
       placeholder: `Select ${selectedCollectionType?.label}...`,
-      accessor: 'collectionItems',
+      accessor: constants.collectionItemsAccessor,
       type: 'ReactSelect',
       options: collectionData,
       selectedOptions: selectedCollectionItems,
@@ -590,7 +590,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
       onChange: setSelectedCollectionItems,
       loadOptions: onChangeSearch,
       isLoading: collectionDataLoading,
-      show: !itemsEnabled && (selectedWidgetType?.value !== 'Tabs'|| selectedWidgetType?.value !== 'Text'),
+      show: !itemsEnabled && (selectedWidgetType?.value === constants.carouselWidgetTypeValue || selectedWidgetType?.value === constants.fixedCardWidgetTypeValue),
       formatOptionLabel: formatOptionLabel,
       listCode: selectedCollectionType?.value,
       customStyles: reactSelectStyles || {},
@@ -615,7 +615,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
         languages={languages}
       />
 
-      {selectedWidgetType?.value === 'Tabs' ? (
+      {selectedWidgetType?.value === constants.tabsWidgetTypeValue ? (
         <Tabs
           clearErrors={clearErrors}
           getValues={getValues}
@@ -640,7 +640,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
         />
       ) : null}
 
-      {!itemsEnabled && selectedWidgetType?.value !== 'Tabs' && (
+      {!itemsEnabled && selectedWidgetType?.value !== constants.tabsWidgetTypeValue && (
         <DNDItemsList
           items={selectedCollectionItems}
           onDragEnd={onCollectionIndexChange}
@@ -649,7 +649,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
         />
       )}
 
-      {itemsEnabled && (selectedWidgetType?.value !== 'Tabs'|| selectedWidgetType?.value !== 'Text') && (
+      {itemsEnabled && (selectedCollectionType === undefined) && (
         <>
           {/* Web Items */}
           <ItemsAccordian
