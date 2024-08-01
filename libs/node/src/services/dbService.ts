@@ -81,3 +81,22 @@ export async function getOne<T extends EntityType>(
 export async function bulkInsert<T extends EntityType>(Modal: Model<T>, docs: T[]): Promise<ReturnDocument[]> {
   return await Modal.insertMany(docs);
 }
+
+export async function checkUnique<T extends EntityType>({
+Modal,
+uniqueField,
+errorMessage,
+value
+}: {
+  Modal: Model<T>,
+  uniqueField: keyof T,
+  value: any,
+  errorMessage: string
+}): Promise<void> {
+  const query: FilterQuery<T> = { [uniqueField]: value } as FilterQuery<T>;
+  const result = await getOne(Modal, query);
+ 
+  if (result) {
+    throw new Error(errorMessage);
+  }
+}

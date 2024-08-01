@@ -7,7 +7,9 @@ import {
   bulkInsert,
   deleteAll,
   getOne,
+  checkUnique,
 } from '../services/dbService';
+import { VALIDATION } from '../constants';
 import {
   successResponse,
   createdDocumentResponse,
@@ -70,6 +72,14 @@ export const createWidget = catchAsync(
     const models = getModals(req);
     const data = req.body;
     let items = [];
+   
+    await checkUnique({
+      Modal: models['Widget'],
+      uniqueField: 'code',
+      value: data.code,
+      errorMessage: VALIDATION.WIDGET_EXISTS
+    });
+
     if ('items' in data) {
       items = JSON.parse(JSON.stringify(data.items));
       delete data.items;
