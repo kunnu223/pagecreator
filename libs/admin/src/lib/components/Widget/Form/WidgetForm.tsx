@@ -74,10 +74,10 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
   const callerRef = useRef<NodeJS.Timeout | null>(null);
 
   const [activeTab, setActiveTab] = useState(0);
+  const [itemsEnabled, setItemsEnabled] = useState(true);
   const [webItemsVisible, setWebItemsVisible] = useState(false);
   const [mobileItemsVisible, setMobileItemsVisible] = useState(false);
   const [selectedWidgetType, setSelectedWidgetType] = useState<any>();
-  const [itemsEnabled, setItemsEnabled] = useState(true);
   const [selectedCollectionItems, setSelectedCollectionItems] = useState<
     OptionType[]
   >([]);
@@ -96,9 +96,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
         (type) => type.value === data?.widgetType
       );
       setSelectedWidgetType(widgetType);
-      if (data?.itemsType === constants.imageItemsTypeValue) {
-        setItemsEnabled(true);
-      } else {
+      if (data?.itemsType !== constants.imageItemsTypeValue || data?.widgetType === "Text") {
         setItemsEnabled(false);
       }
       if (
@@ -109,6 +107,9 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
         setSelectedCollectionType(
           itemsTypes.find((item) => item.value === data?.collectionName)
         );
+      }
+      if(data?.widgetType === "Text"){
+        setItemsEnabled(false);
       }
     }
   }, [data, formState, itemsTypes, widgetTypes]);
@@ -231,12 +232,19 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
 
   // Widget Form Functions
   const onWidgetFormInputChange = useCallback(
-    (value: ObjectType, name: string | undefined) => {
+    (value: ObjectType, name: string | undefined) => {     
       if (name === constants.widgetTypeAccessor) {
         const widgetType = widgetTypes.find(
           (type) => type.value === value[name]
         );
         setSelectedWidgetType(widgetType);
+        
+        if(widgetType?.value === "Text"){
+          setItemsEnabled(false)
+        }else{
+          setItemsEnabled(true)
+        }
+
         if (value[name] === constants.tabsWidgetTypeValue) {
           const firstItemType = getFirstItemTypeValue(value[name]);
           if (firstItemType) {
