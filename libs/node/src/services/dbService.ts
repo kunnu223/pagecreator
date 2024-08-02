@@ -94,9 +94,9 @@ value
   errorMessage: string
 }): Promise<void> {
   const query: FilterQuery<T> = { [uniqueField]: value } as FilterQuery<T>;
-  const result = await getOne(Modal, query);
- 
-  if (result) {
-    throw new Error(errorMessage);
-  }
+  let result;
+  try {
+    result = await getOne(Modal, query);
+  } catch (error) {}
+  if(result) throw new Error(errorMessage)
 }
