@@ -318,11 +318,6 @@ const useWidget = ({
       }
     } catch (error) {
       setLoading(false);
-      onError(
-        CALLBACK_CODES.UPDATE,
-        INTERNAL_ERROR_CODE,
-        (error as Error).message
-      );
     }
   };
   const onCloseForm = () => {
