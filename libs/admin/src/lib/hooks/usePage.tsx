@@ -189,7 +189,6 @@ const usePage = ({
       }
     } catch (error) {
       setLoading(false);
-      onError(code, INTERNAL_ERROR_CODE, (error as Error).message);
     }
   };
   const onCloseForm = () => {

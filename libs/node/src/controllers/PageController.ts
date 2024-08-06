@@ -1,13 +1,13 @@
 import { Types } from 'mongoose';
-import { create, remove, update, list } from '../services/dbService';
+import { create, remove, update, list , checkUnique } from '../services/dbService';
 import {
   successResponse,
   createdDocumentResponse,
 } from './../utils/responseHandlers';
 import { IRequest, IResponse } from '../types';
-
 import { defaults } from '../utils/defaults';
 import { updateRedisPage } from '../services/dataService';
+import { VALIDATION } from '../constants';
 
 const catchAsync = (fn: any) => {
   return defaults.catchAsync(fn, 'Page');
@@ -17,6 +17,20 @@ const getModals = (req: IRequest) => defaults.getModals(req);
 export const createPage = catchAsync(async (req: IRequest, res: IResponse) => {
   const { Page } = getModals(req);
   const data = req.body;
+
+  await checkUnique({
+    Modal: Page,
+    uniqueField: 'code',
+    value: data.code,
+    errorMessage: VALIDATION.WIDGET_EXISTS
+  });
+ 
+  await checkUnique({
+    Modal: Page,
+    uniqueField: 'slug',
+    value: data.slug,
+    errorMessage: VALIDATION.SLUG_EXISTS
+  });
   const page = await create(Page, data);
   res.message = req?.i18n?.t('page.create');
   return createdDocumentResponse(page, res);

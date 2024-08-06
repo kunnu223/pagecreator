@@ -5,9 +5,11 @@ export const VALIDATION = {
 export const RESPONSE_CODES = {
 	DEFAULT: 'SUCCESS',
 	ERROR: 'ERROR',
+	VALIDATION_FAILED: 'VALIDATION_FAILED'
 };
 export const REGEXS = {
 	OBJECTID_CAST_FAILED: /Cast to ObjectId failed/gm,
+	IS_AVAILABLE: /is available!/gm
 };
 export const MONGOOSE_FIND_QUERIES = [
 	'count',
