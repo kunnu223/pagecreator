@@ -21,7 +21,7 @@ export const defaults: IConfig = {
           });  
         }
         // this.logger.error(err.message);
-        res.status(internalServerError).json({
+        return res.status(internalServerError).json({
           code: RESPONSE_CODES.ERROR,
           message,
           data: undefined,
