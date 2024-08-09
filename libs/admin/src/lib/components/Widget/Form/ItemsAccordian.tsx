@@ -182,9 +182,7 @@ const ItemsAccordian = ({
                 <>
                   {languages.map((lang) => (
                     <Input
-                      rest={register(`${name}.${index}.titles.${lang.code}`, {
-                        required: commonTranslations.titleRequired,
-                      })}
+                      rest={register(`${name}.${index}.titles.${lang.code}`)}
                       label={commonTranslations.title + ` (${lang.name})`}
                       error={
                         errors[name]?.[index]?.['titles']?.[lang.code]
@@ -198,21 +196,19 @@ const ItemsAccordian = ({
                       placeholder={
                         commonTranslations.titlePlaceholder + ` (${lang.name})`
                       }
-                      required
+                     
                     />
                   ))}
                 </>
               ) : (
                 <Input
-                  rest={register(`${name}.${index}.title`, {
-                    required: commonTranslations.titleRequired,
-                  })}
+                  rest={register(`${name}.${index}.title`)}
                   label={commonTranslations.title}
                   error={errors[name]?.[index]?.['title']?.message?.toString()}
                   type="text"
                   className="w-full p-2"
                   placeholder={commonTranslations.titlePlaceholder}
-                  required
+                
                 />
               )}
               {Array.isArray(languages) && languages.length > 0 ? (
