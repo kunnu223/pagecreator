@@ -46,7 +46,8 @@ const WidgetSchema = new Schema<IWidgetSchema>({
       collectionItems: [{ type: Types.ObjectId, refPath: 'collectionName' }],
     },
   ],
-  textContent: {type: String}
+  textContent: {type: String},
+  htmlContent: {type: String}
 });
 
 WidgetSchema.plugin(softDeletePlugin);

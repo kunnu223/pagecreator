@@ -31,6 +31,8 @@ const constants = {
   fixedCardWidgetTypeValue: 'FixedCard',
   carouselWidgetTypeValue: 'Carousel',
   imageItemsTypeValue: 'Image',
+  textWidgetTypeValue: 'Text',
+  htmlWidgetTypeValue: 'HTML',
   tabsAccessor: 'tabs',
   webItems: 'webItems',
   mobileItems: 'mobileItems',

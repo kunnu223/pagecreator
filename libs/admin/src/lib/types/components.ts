@@ -6,6 +6,7 @@ import {
   UseFormClearErrors,
   UseFormGetValues,
   UseFormSetValue,
+  ValidationRule,
 } from 'react-hook-form';
 import { Routes_Input } from './api';
 import {
@@ -150,6 +151,9 @@ export interface InputRendererProps {
   disabled?: boolean;
 }
 export interface WidgetTranslationPairs {
+  htmlContentRequired: string | ValidationRule<boolean> | undefined;
+  htmlContentPlaceholder: string | undefined;
+  htmlContent: string | undefined;
   itemsType: string;
   itemsTypePlaceholder: string;
   widgetType: string;

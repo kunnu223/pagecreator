@@ -62,6 +62,7 @@ export interface IWidgetSchema extends Document {
   }[];
   backgroundColor: string;
   textContent: string;
+  htmlContent: string;
 }
 export interface IItemSchema extends Document {
   widgetId: typeof Types.ObjectId;
