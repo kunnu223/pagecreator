@@ -7,6 +7,10 @@ const PageSchema = new Schema<IPageSchema>({
   name: String,
   code: String,
   slug: String,
+  canDel: {
+    type: Boolean,
+    default: true,
+  },
   widgets: [{ type: Types.ObjectId, ref: 'Widget' }],
 });
 
