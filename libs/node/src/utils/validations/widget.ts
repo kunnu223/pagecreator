@@ -88,7 +88,8 @@ export const create = joi.object<ItemValidation>({
   deletedBy: joi.any().optional(),
   deletedAt: joi.any().optional(),
   textContent: joi.string().optional(),
-  htmlContent: joi.string().optional()
+  htmlContent: joi.string().optional(),
+   canDel: joi.boolean().optional()
 });
 
 export const update = joi.object<ItemValidation>({

@@ -46,6 +46,10 @@ const WidgetSchema = new Schema<IWidgetSchema>({
       collectionItems: [{ type: Types.ObjectId, refPath: 'collectionName' }],
     },
   ],
+  canDel: {
+    type: Boolean,
+    default: true,
+  },
   textContent: {type: String},
   htmlContent: {type: String}
 });
