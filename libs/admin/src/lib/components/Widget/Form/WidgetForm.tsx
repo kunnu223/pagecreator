@@ -108,9 +108,6 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
           itemsTypes.find((item) => item.value === data?.collectionName)
         );
       }
-      if(data?.widgetType === "Text"){
-        setItemsEnabled(false);
-      }
     }
   }, [data, formState, itemsTypes, widgetTypes]);
 
@@ -239,11 +236,9 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
         );
         setSelectedWidgetType(widgetType);
         
-        if(widgetType?.value === "Text"){
-          setItemsEnabled(false)
-        }else{
+        if(widgetType && [constants.fixedCardWidgetTypeValue, constants.carouselWidgetTypeValue].includes(widgetType?.value) && !selectedCollectionType){
           setItemsEnabled(true)
-        }
+        } else setItemsEnabled(false)
 
         if (value[name] === constants.tabsWidgetTypeValue) {
           const firstItemType = getFirstItemTypeValue(value[name]);
@@ -275,7 +270,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
         );
       }  
     },
-    [getFirstItemTypeValue, itemsTypes, widgetTypes]
+    [getFirstItemTypeValue, itemsTypes, widgetTypes, selectedCollectionType]
   );
   const validateTabs = (tabsData: any) => {
     const isLanguagesProvided =
@@ -598,7 +593,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
       onChange: setSelectedCollectionItems,
       loadOptions: onChangeSearch,
       isLoading: collectionDataLoading,
-      show: !itemsEnabled && (selectedWidgetType?.value === constants.carouselWidgetTypeValue || selectedWidgetType?.value === constants.fixedCardWidgetTypeValue),
+      show: !itemsEnabled && (selectedWidgetType?.value === constants.carouselWidgetTypeValue || selectedWidgetType?.value === constants.fixedCardWidgetTypeValue || !selectedWidgetType) && !!selectedCollectionType?.value,
       formatOptionLabel: formatOptionLabel,
       listCode: selectedCollectionType?.value,
       customStyles: reactSelectStyles || {},
