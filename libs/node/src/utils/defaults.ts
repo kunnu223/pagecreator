@@ -18,7 +18,7 @@ export const defaults: IConfig = {
             code: RESPONSE_CODES.VALIDATION_FAILED,
             message,
             data: undefined,
-          });  
+          });
         }
         // this.logger.error(err.message);
         return res.status(internalServerError).json({
