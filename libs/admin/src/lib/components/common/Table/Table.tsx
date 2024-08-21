@@ -100,7 +100,7 @@ const Table = ({
                         ) : null}
                         {actions &&
                           actions.delete &&
-                          typeof actions.delete === 'function' && item['canDel'] && (
+                          typeof actions.delete === 'function' &&  !!item['canDel'] !== false &&  (
                             <button
                               className="khb_actions-delete"
                               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
