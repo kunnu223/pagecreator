@@ -92,6 +92,7 @@ export type CollectionItem = {
   searchColumns?: string[];
   match?: ObjectType;
   aggregations?: any[];
+  searchLimit?: number;
 };
 
 export type RedisConfig = {
