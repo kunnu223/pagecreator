@@ -338,82 +338,79 @@ export const getWidgetTypes = catchAsync(
   }
 );
 
-export const getCollectionData = catchAsync(
-  async (req: IRequest, res: IResponse) => {
-    let limit = 10;
-    const models = getModals(req);
-    const { search, collectionName, collectionItems } = req.body;
-    if (Array.isArray(collectionItems))
-      limit = Math.max(collectionItems.length, limit);
-    const collectionItem: CollectionItem | undefined =
-      defaults.collections.find(
-        (collection) => collection.collectionName === collectionName
-      );
-    if (!collectionItem) {
-      throw new Error(`No collection is specified with ${collectionName}`);
-    }
-    // setting up mongoose model
-    const TempModel = getCollectionModal(collectionName, models);
-    // fetching data
-    let query: any = collectionItem.filters || {};
-    const orOptions: any = [];
-    let addFieldOptions: any = {};
-    if (
-      search &&
-      Array.isArray(collectionItem.searchColumns) &&
-      collectionItem.searchColumns.length
-    ) {
-      collectionItem.searchColumns.forEach((column) =>
-        orOptions.push({
-          [column]: {
-            $regex: search,
-            $options: 'i',
-          },
-        })
-      );
-    } else {
-      orOptions.push({});
-    }
-    if (Array.isArray(collectionItems) && collectionItems.length) {
-      addFieldOptions = {
-        __order: {
-          $indexOfArray: [
-            collectionItems,
-            {
-              $toString: '$_id',
-            },
-          ],
-        },
-      };
-      orOptions.push({ _id: { $in: formatCollectionItems(collectionItems) } });
-    }
-    if (orOptions.length > 0) {
-      query = {
-        ...query,
-        $or: orOptions,
-      };
-    }
-    const collectionData = await TempModel.aggregate([
-      ...(Array.isArray(collectionItem.aggregations)
-        ? collectionItem.aggregations
-        : []),
-      {
-        $match: query,
-      },
-      { $addFields: addFieldOptions },
-      {
-        $sort: {
-          __order: -1,
-        },
-      },
-      {
-        $limit: limit,
-      },
-    ]);
-    res.message = req?.i18n?.t('widget.getCollectionData');
-    return successResponse({ docs: collectionData }, res);
+export const getCollectionData = catchAsync(async (req: IRequest, res: IResponse) => {
+  const models = getModals(req);
+  const { search, collectionName, collectionItems } = req.body;
+  const collectionItem: CollectionItem | undefined = defaults.collections.find(
+    (collection) => collection.collectionName === collectionName
+  );
+  if (!collectionItem) {
+    throw new Error(`No collection is specified with ${collectionName}`);
   }
-);
+  let limit = collectionItem.searchLimit || 10;
+  if (Array.isArray(collectionItems))
+    limit = Math.max(collectionItems.length, limit);
+  // setting up mongoose model
+  const TempModel = getCollectionModal(collectionName, models);
+  // fetching data
+  let query: any = collectionItem.filters || {};
+  const orOptions: any = [];
+  let addFieldOptions: any = {};
+  if (
+    search &&
+    Array.isArray(collectionItem.searchColumns) &&
+    collectionItem.searchColumns.length
+  ) {
+    collectionItem.searchColumns.forEach((column) =>
+      orOptions.push({
+        [column]: {
+          $regex: search,
+          $options: 'i',
+        },
+      })
+    );
+  } else {
+    orOptions.push({});
+  }
+  if (Array.isArray(collectionItems) && collectionItems.length) {
+    addFieldOptions = {
+      __order: {
+        $indexOfArray: [
+          collectionItems,
+          {
+            $toString: '$_id',
+          },
+        ],
+      },
+    };
+    orOptions.push({ _id: { $in: formatCollectionItems(collectionItems) } });
+  }
+  if (orOptions.length > 0) {
+    query = {
+      ...query,
+      $or: orOptions,
+    };
+  }
+  const collectionData = await TempModel.aggregate([
+    ...(Array.isArray(collectionItem.aggregations)
+      ? collectionItem.aggregations
+      : []),
+    {
+      $match: query,
+    },
+    { $addFields: addFieldOptions },
+    {
+      $sort: {
+        __order: -1,
+      },
+    },
+    {
+      $limit: limit,
+    },
+  ]);
+  res.message = req?.i18n?.t('widget.getCollectionData');
+  return successResponse({ docs: collectionData }, res);
+});
 
 export const getLanguages = catchAsync(async (req: any, res: any) => {
   return successResponse(
