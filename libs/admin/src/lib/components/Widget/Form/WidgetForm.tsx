@@ -303,7 +303,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
         );
       }  
     },
-    [getFirstItemTypeValue, itemsTypes, setValue, widgetTypes]
+    [getFirstItemTypeValue, itemsTypes, setValue, widgetTypes, selectedCollectionType]
   );
   const validateTabs = (tabsData: any) => {
     const isLanguagesProvided =
@@ -656,7 +656,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
       show:
         !itemsEnabled &&
         (selectedWidgetType?.value === constants.carouselWidgetTypeValue ||
-          selectedWidgetType?.value === constants.fixedCardWidgetTypeValue),
+          selectedWidgetType?.value === constants.fixedCardWidgetTypeValue || !selectedWidgetType) && !!selectedCollectionType?.value,
       formatOptionLabel: formatOptionLabel,
       listCode: selectedCollectionType?.value,
       customStyles: reactSelectStyles || {},
