@@ -6,7 +6,8 @@ export enum WidgetTypes {
   FixedCard = 'FixedCard',
   Carousel = 'Carousel',
   Tabs = 'Tabs',
-  Text = 'Text'
+  Text = 'Text',
+  HTML = 'HTML'
 }
 
 export enum ItemTypes {

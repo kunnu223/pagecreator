@@ -26,6 +26,7 @@ export interface IPageSchema extends Document {
   name: string;
   code: string;
   slug: string;
+  canDel: boolean;
   widgets: string[];
 }
 export interface ITabSchema extends Document {
@@ -62,6 +63,8 @@ export interface IWidgetSchema extends Document {
   }[];
   backgroundColor: string;
   textContent: string;
+  htmlContent: string;
+  canDel: boolean;
 }
 export interface IItemSchema extends Document {
   widgetId: typeof Types.ObjectId;

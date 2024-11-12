@@ -31,6 +31,8 @@ const constants = {
   fixedCardWidgetTypeValue: 'FixedCard',
   carouselWidgetTypeValue: 'Carousel',
   imageItemsTypeValue: 'Image',
+  textWidgetTypeValue: 'Text',
+  htmlWidgetTypeValue: 'HTML',
   tabsAccessor: 'tabs',
   webItems: 'webItems',
   mobileItems: 'mobileItems',
@@ -96,7 +98,11 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
         (type) => type.value === data?.widgetType
       );
       setSelectedWidgetType(widgetType);
-      if (data?.itemsType !== constants.imageItemsTypeValue || data?.widgetType === "Text") {
+      if (
+        data?.itemsType !== constants.imageItemsTypeValue ||
+        data?.widgetType === constants.textWidgetTypeValue ||
+        data?.widgetType === constants.htmlWidgetTypeValue
+      ) {
         setItemsEnabled(false);
       }
       if (
@@ -107,6 +113,12 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
         setSelectedCollectionType(
           itemsTypes.find((item) => item.value === data?.collectionName)
         );
+      }
+      if (
+        data?.widgetType === constants.textWidgetTypeValue ||
+        data?.widgetType === constants.htmlWidgetTypeValue
+      ) {
+        setItemsEnabled(false);
       }
     }
   }, [data, formState, itemsTypes, widgetTypes]);
@@ -136,7 +148,9 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
         data[constants.widgetTypeAccessor] === constants.tabsWidgetTypeValue
       ) {
         collectionItems = data[constants.tabsAccessor][activeTab]
-          ? data[constants.tabsAccessor][activeTab][constants.collectionItemsAccessor]
+          ? data[constants.tabsAccessor][activeTab][
+              constants.collectionItemsAccessor
+            ]
           : [];
         valueToSet = `${constants.tabsAccessor}.${activeTab}.${constants.tabCollectionItemsAccessor}`;
       } else if (
@@ -217,34 +231,53 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
     (widgetType: string) => {
       const derivedItemTypes =
         widgetType === constants.tabsWidgetTypeValue
-          ? itemsTypes.filter((item) => item.label !== constants.imageItemsTypeValue)
+          ? itemsTypes.filter(
+              (item) => item.label !== constants.imageItemsTypeValue
+            )
           : itemsTypes;
-      return derivedItemTypes[0];
+      const firstItemType = derivedItemTypes[0];
+      setValue(constants.itemTypeAccessor, firstItemType?.value);  
+      return firstItemType;
     },
-    [itemsTypes]
+    [itemsTypes, setValue]
   );
+  
+
   const getFirstWidgetTypeValue = useCallback(() => {
     return widgetTypes[0].value;
   }, [widgetTypes]);
 
   // Widget Form Functions
   const onWidgetFormInputChange = useCallback(
-    (value: ObjectType, name: string | undefined) => {     
+    (value: ObjectType, name: string | undefined) => {
       if (name === constants.widgetTypeAccessor) {
         const widgetType = widgetTypes.find(
           (type) => type.value === value[name]
         );
         setSelectedWidgetType(widgetType);
-        
-        if(widgetType && [constants.fixedCardWidgetTypeValue, constants.carouselWidgetTypeValue].includes(widgetType?.value) && !selectedCollectionType){
-          setItemsEnabled(true)
-        } else setItemsEnabled(false)
 
-        if (value[name] === constants.tabsWidgetTypeValue) {
+        if (
+          widgetType?.value === constants.textWidgetTypeValue ||
+          widgetType?.value === constants.htmlWidgetTypeValue
+        ) {
+          setItemsEnabled(false);
+        } else {
+          setItemsEnabled(true);
+        }
+  
+        if (
+          widgetType?.value === constants.carouselWidgetTypeValue ||
+          widgetType?.value === constants.fixedCardWidgetTypeValue
+        ) {
+          setValue(constants.itemTypeAccessor, "Image");
+        }
+  
+        if (widgetType?.value === constants.tabsWidgetTypeValue) {
           const firstItemType = getFirstItemTypeValue(value[name]);
           if (firstItemType) {
             setSelectedCollectionType(firstItemType);
           }
+          setValue(constants.itemTypeAccessor, firstItemType?.value);
         }
       } else if (name === constants.itemTypeAccessor) {
         if (
@@ -270,7 +303,7 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
         );
       }  
     },
-    [getFirstItemTypeValue, itemsTypes, widgetTypes, selectedCollectionType]
+    [getFirstItemTypeValue, itemsTypes, setValue, widgetTypes, selectedCollectionType]
   );
   const validateTabs = (tabsData: any) => {
     const isLanguagesProvided =
@@ -488,31 +521,48 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
       label: widgetTranslations.autoPlay,
       accessor: 'autoPlay',
       type: 'checkbox',
-      show: selectedWidgetType?.value === 'Carousel',
+      show: selectedWidgetType?.value === constants.carouselWidgetTypeValue,
       switchClass: switchClass,
     },
     {
       label: widgetTranslations.textContent,
       accessor: 'textContent',
-      required: selectedWidgetType?.value === 'Text',
-      type:
-        customInputs && customInputs['textContent'] ? undefined : 'text',
+      required: selectedWidgetType?.value === constants.textWidgetTypeValue,
+      type: customInputs && customInputs['textContent'] ? undefined : 'text',
       placeholder: widgetTranslations.textContentPlaceholder,
       validations: {
         required: widgetTranslations.textContentRequired,
       },
       info: widgetTranslations.textContentInfo,
-      show: selectedWidgetType?.value === 'Text',
+      show: selectedWidgetType?.value === constants.textWidgetTypeValue,
       Input:
         customInputs && customInputs['textContent']
           ? customInputs['textContent']
           : undefined,
     },
     {
+      label: widgetTranslations.htmlContent,
+      accessor: 'htmlContent',
+      required: selectedWidgetType?.value === constants.htmlWidgetTypeValue,
+      type:
+        customInputs && customInputs['htmlContent'] ? undefined : 'textarea',
+      placeholder: widgetTranslations.htmlContentPlaceholder,
+      validations: {
+        required: widgetTranslations.htmlContentRequired,
+      },
+      show: selectedWidgetType?.value === constants.htmlWidgetTypeValue,
+      Input:
+        customInputs && customInputs['htmlContent']
+          ? customInputs['htmlContent']
+          : undefined,
+    },
+    {
       label: widgetTranslations.itemsType,
       required: true,
       editable: false,
-      show: selectedWidgetType?.value !== 'Text',
+      show:
+        selectedWidgetType?.value !== constants.textWidgetTypeValue &&
+        selectedWidgetType?.value !== constants.htmlWidgetTypeValue,
       accessor: constants.itemTypeAccessor,
       type: 'select',
       validations: {
@@ -521,9 +571,13 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
       options:
         selectedWidgetType?.value === constants.tabsWidgetTypeValue ||
         selectedWidgetType?.collectionsOnly
-          ? itemsTypes.filter((item) => item.label !== constants.imageItemsTypeValue)
+          ? itemsTypes.filter(
+              (item) => item.label !== constants.imageItemsTypeValue
+            )
           : selectedWidgetType?.imageOnly
-          ? itemsTypes.filter((item) => item.label === constants.imageItemsTypeValue)
+          ? itemsTypes.filter(
+              (item) => item.label === constants.imageItemsTypeValue
+            )
           : itemsTypes,
     },
     {
@@ -536,7 +590,9 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
       label: widgetTranslations.webPerRow,
       accessor: 'webPerRow',
       type: 'number',
-      show: selectedWidgetType?.value !== 'Text',
+      show:
+        selectedWidgetType?.value !== constants.textWidgetTypeValue &&
+        selectedWidgetType?.value !== constants.htmlWidgetTypeValue,
       required: true,
       placeholder: widgetTranslations.webPerRowPlaceholder,
       wrapperClassName: 'khb_grid-item-1of3 khb_padding-right-1',
@@ -552,7 +608,9 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
       label: widgetTranslations.tabletPerRow,
       accessor: 'tabletPerRow',
       type: 'number',
-      show: selectedWidgetType?.value !== 'Text',
+      show:
+        selectedWidgetType?.value !== constants.textWidgetTypeValue &&
+        selectedWidgetType?.value !== constants.htmlWidgetTypeValue,
       required: true,
       placeholder: widgetTranslations.tabletPerRowPlaceholder,
       wrapperClassName: 'khb_grid-item-1of3 khb_padding-left-1',
@@ -568,7 +626,9 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
       label: widgetTranslations.mobilePerRow,
       accessor: 'mobilePerRow',
       type: 'number',
-      show: selectedWidgetType?.value !== 'Text',
+      show:
+        selectedWidgetType?.value !== 'Text' &&
+        selectedWidgetType?.value !== 'HTML',
       required: true,
       placeholder: widgetTranslations.mobilePerRowPlaceholder,
       wrapperClassName:
@@ -593,7 +653,10 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
       onChange: setSelectedCollectionItems,
       loadOptions: onChangeSearch,
       isLoading: collectionDataLoading,
-      show: !itemsEnabled && (selectedWidgetType?.value === constants.carouselWidgetTypeValue || selectedWidgetType?.value === constants.fixedCardWidgetTypeValue || !selectedWidgetType) && !!selectedCollectionType?.value,
+      show:
+        !itemsEnabled &&
+        (selectedWidgetType?.value === constants.carouselWidgetTypeValue ||
+          selectedWidgetType?.value === constants.fixedCardWidgetTypeValue || !selectedWidgetType) && !!selectedCollectionType?.value,
       formatOptionLabel: formatOptionLabel,
       listCode: selectedCollectionType?.value,
       customStyles: reactSelectStyles || {},
@@ -643,61 +706,67 @@ const WidgetForm = ({ formRef, customInputs }: FormProps) => {
         />
       ) : null}
 
-      {!itemsEnabled && selectedWidgetType?.value !== constants.tabsWidgetTypeValue && (
-        <DNDItemsList
-          items={selectedCollectionItems}
-          onDragEnd={onCollectionIndexChange}
-          formatItem={formatListItem}
-          listCode={selectedCollectionType?.value}
-        />
-      )}
-
-      {itemsEnabled && (selectedCollectionType === undefined) && (
-        <>
-          {/* Web Items */}
-          <ItemsAccordian
-            languages={languages}
-            clearError={clearErrors}
-            collapseId={constants.webItems}
-            title={widgetTranslations.webItems}
-            id={constants.webItems}
-            setError={setError}
-            show={webItemsVisible || !!(errors && errors?.[constants.webItems])}
-            toggleShow={setWebItemsVisible}
-            itemType="Web"
-            name={constants.webItems}
-            errors={errors}
-            control={control}
-            register={register}
-            loading={loading}
-            addText={commonTranslations.add}
-            deleteText={commonTranslations.delete}
+      {!itemsEnabled &&
+        selectedWidgetType?.value !== constants.tabsWidgetTypeValue && (
+          <DNDItemsList
+            items={selectedCollectionItems}
+            onDragEnd={onCollectionIndexChange}
+            formatItem={formatListItem}
+            listCode={selectedCollectionType?.value}
           />
+        )}
 
-          {/* Mobile Items */}
-          <ItemsAccordian
-            languages={languages}
-            clearError={clearErrors}
-            collapseId={constants.mobileItems}
-            title={widgetTranslations.mobileItems}
-            id={constants.mobileItems}
-            name={constants.mobileItems}
-            setError={setError}
-            loading={loading}
-            show={
-              mobileItemsVisible ||
-              !!(errors && errors?.[constants.mobileItems])
-            }
-            toggleShow={setMobileItemsVisible}
-            itemType="Mobile"
-            errors={errors}
-            control={control}
-            register={register}
-            addText={commonTranslations.add}
-            deleteText={commonTranslations.delete}
-          />
-        </>
-      )}
+      {itemsEnabled &&
+        (selectedCollectionType === undefined ||
+          selectedWidgetType.value === 'Carousel' ||
+          selectedWidgetType.value === 'FixedCard') && (
+          <>
+            {/* Web Items */}
+            <ItemsAccordian
+              languages={languages}
+              clearError={clearErrors}
+              collapseId={constants.webItems}
+              title={widgetTranslations.webItems}
+              id={constants.webItems}
+              setError={setError}
+              show={
+                webItemsVisible || !!(errors && errors?.[constants.webItems])
+              }
+              toggleShow={setWebItemsVisible}
+              itemType="Web"
+              name={constants.webItems}
+              errors={errors}
+              control={control}
+              register={register}
+              loading={loading}
+              addText={commonTranslations.add}
+              deleteText={commonTranslations.delete}
+            />
+
+            {/* Mobile Items */}
+            <ItemsAccordian
+              languages={languages}
+              clearError={clearErrors}
+              collapseId={constants.mobileItems}
+              title={widgetTranslations.mobileItems}
+              id={constants.mobileItems}
+              name={constants.mobileItems}
+              setError={setError}
+              loading={loading}
+              show={
+                mobileItemsVisible ||
+                !!(errors && errors?.[constants.mobileItems])
+              }
+              toggleShow={setMobileItemsVisible}
+              itemType="Mobile"
+              errors={errors}
+              control={control}
+              register={register}
+              addText={commonTranslations.add}
+              deleteText={commonTranslations.delete}
+            />
+          </>
+        )}
     </div>
   );
 };
